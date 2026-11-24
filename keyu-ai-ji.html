@@ -1,0 +1,3158 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>课下学AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&family=JetBrains+Mono:wght@400;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.75rem; }
+      * { box-sizing: border-box; }
+      :root{
+        --bg:#f7f8f6;
+        --surface:#ffffff;
+        --surface2:#eef1ec;
+        --ink:#15211b;
+        --muted:#55645b;
+        --line:#d8ded6;
+        --accent:#0c6b4f;
+        --accent-ink:#ffffff;
+        --amber:#b97a14;
+        --amber-bg:#fdf3e0;
+        --code-bg:#101a15;
+        --code-ink:#d7e8dc;
+        --code-dim:#7d9687;
+        --shadow:0 10px 30px rgba(21,33,27,.08);
+        --radius:14px;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#0d1310;
+          --surface:#151d18;
+          --surface2:#1b261f;
+          --ink:#e6ede7;
+          --muted:#9db0a3;
+          --line:#2a3a30;
+          --accent:#3ecf9b;
+          --accent-ink:#0b1511;
+          --amber:#e5aa45;
+          --amber-bg:#2b2110;
+          --code-bg:#0a100c;
+          --code-ink:#d7e8dc;
+          --code-dim:#71897a;
+          --shadow:0 10px 30px rgba(0,0,0,.35);
+        }
+      }
+      html{ scroll-behavior:smooth; }
+      @media (prefers-reduced-motion: reduce){
+        html{ scroll-behavior:auto; }
+        *{ animation:none !important; transition:none !important; }
+      }
+      body{
+        margin:0; background:var(--bg); color:var(--ink);
+        font-family:"Noto Sans SC", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+        line-height:1.75; font-size:16px;
+        -webkit-font-smoothing:antialiased;
+      }
+      .mono{ font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+      a{ color:var(--accent); }
+      .wrap{ max-width:1060px; margin:0 auto; padding:0 20px; }
+
+      /* ---------- top nav ---------- */
+      .topbar{
+        position:sticky; top:0; z-index:50;
+        background:color-mix(in srgb, var(--bg) 88%, transparent);
+        backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+        border-bottom:1px solid var(--line);
+      }
+      .topbar-in{ display:flex; align-items:center; gap:6px; overflow-x:auto; scrollbar-width:none; padding:8px 0; }
+      .topbar-in::-webkit-scrollbar{ display:none; }
+      .brand{ font-weight:900; white-space:nowrap; margin-right:10px; font-size:15px; }
+      .brand span{ color:var(--accent); }
+      .navlink{
+        white-space:nowrap; text-decoration:none; color:var(--muted);
+        padding:10px 12px; border-radius:9px; font-size:14px; font-weight:500;
+        display:inline-flex; align-items:center; min-height:44px;
+      }
+      .navlink:hover{ color:var(--ink); background:var(--surface2); }
+
+      /* ---------- hero ---------- */
+      .hero{ padding:52px 0 40px; }
+      .hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:start; }
+      .who{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+      .chip{
+        font-size:13px; font-weight:500; color:var(--muted);
+        border:1px solid var(--line); border-radius:999px; padding:5px 12px;
+        background:var(--surface);
+      }
+      .chip b{ color:var(--ink); font-weight:700; }
+      h1{
+        font-size:clamp(30px, 5.2vw, 46px); line-height:1.25; font-weight:900;
+        margin:0 0 18px; letter-spacing:.01em;
+      }
+      h1 .hl{ color:var(--accent); }
+      .lede{ font-size:17px; color:var(--muted); margin:0 0 26px; max-width:34em; }
+      .lede b{ color:var(--ink); }
+      .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+      .stat{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 12px; }
+      .stat .n{ font-size:26px; font-weight:900; line-height:1.1; color:var(--accent); }
+      .stat .t{ font-size:12.5px; color:var(--muted); margin-top:4px; line-height:1.5; }
+
+      .terminal{
+        background:var(--code-bg); border-radius:var(--radius); overflow:hidden;
+        box-shadow:var(--shadow); border:1px solid var(--line);
+      }
+      .term-head{
+        display:flex; align-items:center; gap:7px; padding:11px 14px;
+        border-bottom:1px solid rgba(255,255,255,.08);
+      }
+      .dot{ width:11px; height:11px; border-radius:50%; }
+      .term-title{ margin-left:8px; font-size:12.5px; color:var(--code-dim); }
+      .term-body{
+        padding:16px 16px 18px; font-size:13.5px; line-height:1.9; color:var(--code-ink);
+        min-height:248px; white-space:pre-wrap; word-break:break-word;
+      }
+      .term-body .p{ color:#8fd6ae; }
+      .term-body .ok{ color:#e5aa45; }
+      .cursor{ display:inline-block; width:8px; height:15px; background:#8fd6ae; vertical-align:-2px; animation:blink 1s steps(1) infinite; }
+      @keyframes blink{ 50%{ opacity:0; } }
+      .term-cap{ font-size:12.5px; color:var(--muted); margin-top:10px; }
+
+      /* ---------- sections ---------- */
+      section{ padding:44px 0 8px; }
+      .sec-head{ margin-bottom:22px; }
+      .sec-kicker{ font-size:13px; font-weight:700; color:var(--accent); letter-spacing:.14em; margin-bottom:6px; }
+      h2{ font-size:clamp(23px,3.4vw,30px); font-weight:900; margin:0 0 8px; line-height:1.35; }
+      .sec-sub{ color:var(--muted); margin:0; max-width:44em; }
+
+      /* ---------- works ---------- */
+      .works{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+      .work{
+        background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+        padding:22px; display:flex; flex-direction:column; gap:12px;
+      }
+      .work-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+      .work h3{ font-size:19px; font-weight:900; margin:0; line-height:1.4; }
+      .work .en{ font-size:12px; color:var(--muted); letter-spacing:.06em; }
+      .tag{
+        flex:none; font-size:12px; font-weight:700; color:var(--accent);
+        background:var(--surface2); border-radius:999px; padding:4px 10px;
+      }
+      .work p{ margin:0; color:var(--muted); font-size:14.5px; }
+      .split{ border-top:1px dashed var(--line); padding-top:12px; display:grid; gap:7px; font-size:13.5px; }
+      .split div{ display:flex; gap:8px; }
+      .split .k{ flex:none; width:64px; font-weight:700; color:var(--ink); }
+      .split .v{ color:var(--muted); }
+      .work-link{
+        margin-top:auto; align-self:flex-start; display:inline-flex; align-items:center; gap:7px;
+        background:var(--accent); color:var(--accent-ink); text-decoration:none; font-weight:700;
+        font-size:14px; padding:10px 18px; border-radius:10px; min-height:44px;
+      }
+      .work-link:hover{ filter:brightness(1.08); }
+      .work-nolink{ margin-top:auto; font-size:13px; color:var(--muted); }
+      .mini-strip{
+        margin-top:16px; background:var(--surface2); border-radius:var(--radius);
+        padding:16px 20px; font-size:14px; color:var(--muted);
+      }
+      .mini-strip b{ color:var(--ink); }
+
+      /* ---------- workflow ---------- */
+      .flow{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+      .flow-btn{
+        border:1px solid var(--line); background:var(--surface); color:var(--muted);
+        border-radius:999px; padding:10px 16px; font-size:14px; font-weight:700; cursor:pointer;
+        font-family:inherit; display:inline-flex; align-items:center; gap:8px; min-height:44px;
+      }
+      .flow-btn .num{
+        width:22px; height:22px; border-radius:50%; background:var(--surface2); color:var(--muted);
+        display:inline-flex; align-items:center; justify-content:center; font-size:12px; flex:none;
+      }
+      .flow-btn[aria-selected="true"]{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+      .flow-btn[aria-selected="true"] .num{ background:rgba(255,255,255,.25); color:inherit; }
+      .panel{
+        background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+        padding:22px; box-shadow:var(--shadow);
+      }
+      .panel h3{ margin:0 0 8px; font-size:18px; font-weight:900; }
+      .panel p{ margin:0; color:var(--muted); font-size:15px; }
+      .panel .example{
+        margin-top:14px; background:var(--code-bg); color:var(--code-ink); border-radius:10px;
+        padding:13px 15px; font-size:13px; line-height:1.8; white-space:pre-wrap; word-break:break-word;
+      }
+      .panel .example .dim{ color:var(--code-dim); }
+
+      /* ---------- prompt lab ---------- */
+      .ver-btns{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+      .ver-btn{
+        border:1px solid var(--line); background:var(--surface); color:var(--muted);
+        border-radius:10px; padding:10px 18px; font-size:14.5px; font-weight:700; cursor:pointer; font-family:inherit; min-height:44px;
+      }
+      .ver-btn[aria-selected="true"]{ background:var(--ink); border-color:var(--ink); color:var(--bg); }
+      .prompt-box{
+        background:var(--code-bg); color:var(--code-ink); border-radius:10px;
+        padding:16px; font-size:13.5px; line-height:1.85; white-space:pre-wrap; word-break:break-word; margin:0;
+      }
+      .lab-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+      .lab-box h4{ margin:0 0 8px; font-size:14px; font-weight:900; }
+      .lab-box ul{ margin:0; padding-left:1.2em; color:var(--muted); font-size:14px; }
+      .lab-box li{ margin-bottom:4px; }
+      .meter{ height:10px; border-radius:99px; background:var(--surface2); overflow:hidden; margin-top:6px; }
+      .meter > div{ height:100%; background:var(--accent); border-radius:99px; transition:width .5s ease; }
+      .meter-note{ font-size:13px; color:var(--muted); margin-top:6px; }
+
+      /* ---------- playground ---------- */
+      .play{
+        background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+        padding:22px; box-shadow:var(--shadow);
+      }
+      .play code{ background:var(--surface2); border-radius:6px; padding:1px 7px; font-size:13px; }
+      .play .scene{ font-size:15px; color:var(--muted); margin:0 0 4px; }
+      .play .scene b{ color:var(--ink); }
+      .slider-row{ display:flex; align-items:center; gap:14px; margin:18px 0 6px; flex-wrap:wrap; }
+      .slider-row label{ font-weight:700; font-size:14.5px; }
+      .slider-row input[type="range"]{ flex:1; min-width:180px; accent-color:var(--accent); height:44px; }
+      .tval{ font-size:20px; font-weight:900; color:var(--accent); min-width:52px; text-align:right; }
+      .bars{ display:grid; gap:9px; margin:14px 0; }
+      .bar-row{ display:grid; grid-template-columns:52px 1fr 58px; align-items:center; gap:10px; font-size:14px; }
+      .bar-row .w{ font-weight:700; }
+      .bar-track{ height:16px; background:var(--surface2); border-radius:6px; overflow:hidden; }
+      .bar-fill{ height:100%; background:var(--accent); border-radius:6px; transition:width .25s ease; }
+      .bar-row.top .bar-fill{ background:var(--amber); }
+      .bar-row .pct{ text-align:right; color:var(--muted); font-size:13px; }
+      .play-actions{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:8px; }
+      .sample-btn{
+        background:var(--accent); color:var(--accent-ink); border:none; border-radius:10px;
+        padding:10px 20px; font-size:14.5px; font-weight:700; cursor:pointer; font-family:inherit; min-height:44px;
+      }
+      .sample-out{ font-size:15px; }
+      .sample-out b{ color:var(--amber); font-size:18px; }
+      .play-note{ font-size:13.5px; color:var(--muted); border-top:1px dashed var(--line); padding-top:12px; margin-top:16px; }
+      .play-note p{ margin:0 0 6px; }
+      .play-note p:last-child{ margin-bottom:0; }
+      .attn-label{ font-weight:700; font-size:14.5px; margin:18px 0 0; }
+      .attn-tokens{ display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px; }
+      .attn-token{
+        border:1px solid var(--line); background:var(--surface2); color:var(--ink);
+        border-radius:999px; padding:9px 16px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; min-height:44px;
+      }
+      .attn-token[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+      .attn-current{ font-size:14px; color:var(--muted); margin:12px 0 0; }
+      .attn-current b{ color:var(--ink); font-size:16px; }
+      .df-stage{ margin:14px 0 4px; }
+      .df-canvas{
+        display:block; width:100%; max-width:520px; margin:0 auto; height:auto;
+        border-radius:10px; border:1px solid var(--line); background:#808080;
+      }
+      .df-step{ font-size:20px; font-weight:900; color:var(--accent); white-space:nowrap; font-variant-numeric:tabular-nums; }
+      .df-phase{
+        background:var(--surface2); border-radius:10px; padding:14px 16px; font-size:15px; margin:12px 0 4px;
+      }
+      .df-phase b{ color:var(--accent); }
+      .df-phase .df-phase-name{ font-weight:900; color:var(--ink); }
+
+      /* ---------- tools table ---------- */
+      .tools{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+      .tool{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px; }
+      .tool h3{ margin:0 0 4px; font-size:16.5px; font-weight:900; }
+      .tool .role{ font-size:12.5px; font-weight:700; color:var(--accent); margin-bottom:8px; }
+      .tool p{ margin:0; font-size:13.5px; color:var(--muted); }
+      .tool .verdict{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); font-size:13.5px; color:var(--ink); }
+
+      /* ---------- Q&A ---------- */
+      .qa{ display:grid; gap:10px; }
+      .qa-item{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+      .qa-q{
+        width:100%; text-align:left; background:none; border:none; cursor:pointer; font-family:inherit;
+        padding:16px 20px; font-size:16px; font-weight:700; color:var(--ink);
+        display:flex; justify-content:space-between; align-items:center; gap:12px; min-height:52px;
+      }
+      .qa-q .arr{ flex:none; color:var(--accent); font-weight:900; transition:transform .25s ease; }
+      .qa-item.open .qa-q .arr{ transform:rotate(45deg); }
+      .qa-a{ display:none; padding:0 20px 18px; color:var(--muted); font-size:14.5px; }
+      .qa-item.open .qa-a{ display:block; }
+      .qa-a p{ margin:0 0 8px; }
+      .qa-a p:last-child{ margin-bottom:0; }
+      .qa-a b{ color:var(--ink); }
+
+      /* ---------- roadmap ---------- */
+      .road{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+      .road-col{ border-radius:var(--radius); padding:20px; border:1px solid var(--line); background:var(--surface); }
+      .road-col.now{ border-color:var(--accent); }
+      .road-col h3{ margin:0 0 12px; font-size:15px; font-weight:900; display:flex; align-items:center; gap:8px; }
+      .road-col h3 .st{ font-size:11.5px; font-weight:700; border-radius:999px; padding:3px 9px; background:var(--surface2); color:var(--muted); }
+      .road-col.now h3 .st{ background:var(--accent); color:var(--accent-ink); }
+      .road-col ul{ margin:0; padding:0; list-style:none; display:grid; gap:9px; font-size:14px; color:var(--muted); }
+      .road-col li{ display:flex; gap:8px; }
+      .road-col li::before{ content:"—"; color:var(--accent); flex:none; }
+
+      footer{ padding:36px 0 48px; color:var(--muted); font-size:13px; }
+      footer .wrap{ border-top:1px solid var(--line); padding-top:20px; display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-between; }
+
+      @media (max-width:860px){
+        .hero-grid{ grid-template-columns:1fr; }
+        .works{ grid-template-columns:1fr; }
+        .tools{ grid-template-columns:1fr 1fr; }
+        .road{ grid-template-columns:1fr; }
+        .lab-grid{ grid-template-columns:1fr; }
+        .stats{ grid-template-columns:repeat(2,1fr); }
+        .term-body{ min-height:0; }
+      }
+      @media (max-width:640px){
+        .topbar-in{ flex-wrap:wrap; overflow-x:visible; row-gap:2px; }
+        .brand{ margin-right:4px; }
+        .navlink{ padding:8px 10px; min-height:40px; }
+      }
+      @media (max-width:480px){
+        .tools{ grid-template-columns:1fr; }
+        .bar-row{ grid-template-columns:44px 1fr 52px; }
+      }
+
+      /* ---------- inline demo overlays ---------- */
+      .demo-overlay{ position:fixed; inset:0; z-index:200; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+      .demo-overlay[hidden]{ display:none; }
+      #demoOverlayCrystal{ background:#f6f5f1; }
+      #demoOverlayPerception{ background:#f2f4f1; }
+      #demoOverlayWorkbench{ background:#f2f4f1; }
+      @media (prefers-color-scheme: dark){
+        #demoOverlayCrystal{ background:#131518; }
+        #demoOverlayPerception{ background:#101511; }
+        #demoOverlayWorkbench{ background:#10140f; }
+      }
+      .demo-bar{
+        position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:12px;
+        padding:10px 16px; background:var(--surface); border-bottom:1px solid var(--line);
+      }
+      .demo-bar .demo-title{ font-weight:900; font-size:15px; }
+      .demo-close{
+        background:var(--accent); color:var(--accent-ink); border:none; border-radius:10px;
+        padding:10px 16px; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit; min-height:44px; flex:none;
+      }
+      button.work-link{ border:none; cursor:pointer; font-family:inherit; }
+      .demo-perception .view-head .tag{ background:none; padding:0; border-radius:0; }
+    </style>
+    <style>
+.demo-crystal{--bg:#f6f5f1;--card:#ffffff;--ink:#1a1d21;--muted:#5b6470;--line:#e2ded4;--si:#475569;--sic:#0e7490;--gan:#b45309;--accent:#0f766e;--soft:#eef2f1;--warn:#fef3c7}
+@media(prefers-color-scheme:dark){.demo-crystal{--bg:#131518;--card:#1c1f23;--ink:#eef0f2;--muted:#a6adb8;--line:#2e3238;--soft:#22282a;--warn:#3a2f10}}
+.demo-crystal *{box-sizing:border-box}
+.demo-crystal{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans SC",system-ui,sans-serif;line-height:1.75}
+.demo-crystal a{color:var(--accent)}
+.demo-crystal button{min-height:40px}
+.demo-crystal .wrap{max-width:1100px;margin:0 auto;padding:20px 18px 56px}
+.demo-crystal h1{font-family:"Noto Serif SC",serif;font-size:clamp(30px,6vw,52px);line-height:1.1;margin:18px 0 10px;letter-spacing:-.02em}
+.demo-crystal h1 span{color:var(--sic)}
+.demo-crystal h1 em{font-style:normal;color:var(--gan)}
+.demo-crystal .lead{font-size:17px;color:var(--muted);max-width:720px}
+.demo-crystal .conclusion{background:var(--ink);color:#fff;padding:18px 20px;border-radius:16px;margin:22px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:700px){.demo-crystal .conclusion{grid-template-columns:1fr}}
+.demo-crystal .conclusion b{font-size:22px;display:block;line-height:1.3}
+.demo-crystal .conclusion p{opacity:.85;font-size:14px;margin:4px 0 0;line-height:1.6}
+.demo-crystal h2{font-size:24px;margin:38px 0 6px;line-height:1.3}
+.demo-crystal h2+p.sub{color:var(--muted);margin-top:0;font-size:14.5px}
+.demo-crystal .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:820px){.demo-crystal .grid3{grid-template-columns:1fr}}
+.demo-crystal .card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.demo-crystal .card-head{padding:14px 16px 10px;border-top:6px solid}
+.demo-crystal .card-head h3{margin:0;font-size:22px}
+.demo-crystal .card-head p{margin:2px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+.demo-crystal .canvas-box{height:280px;background:radial-gradient(circle at 50% 40%,#ffffff 0%,#eceae3 70%);position:relative;cursor:grab;touch-action:none}
+@media(prefers-color-scheme:dark){.demo-crystal .canvas-box{background:radial-gradient(circle at 50% 40%,#2a2e33 0%,#17191c 70%)}}
+.demo-crystal .canvas-box canvas{width:100%!important;height:100%!important;display:block}
+.demo-crystal .hint{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:12px;color:var(--muted);pointer-events:none}
+.demo-crystal .legend{padding:10px 16px 14px;display:flex;gap:14px;flex-wrap:wrap;font-size:13px;border-top:1px solid var(--line)}
+.demo-crystal .dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+.demo-crystal .controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.demo-crystal .controls button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;font-size:14px;cursor:pointer}
+.demo-crystal .controls button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.demo-crystal table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14.5px}
+.demo-crystal th,.demo-crystal td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.demo-crystal th{background:var(--soft);font-size:13px}
+.demo-crystal td.num{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.demo-crystal .best{color:var(--accent);font-weight:900}
+.demo-crystal .scrollx{overflow-x:auto;border-radius:12px}
+@media(max-width:640px){.demo-crystal table{font-size:13.5px}
+.demo-crystal th,.demo-crystal td{padding:9px 8px}}
+.demo-crystal .bars{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.demo-crystal .bar-row{display:grid;grid-template-columns:110px 1fr 86px;gap:10px;align-items:center;margin:10px 0;font-size:14px}
+@media(max-width:560px){.demo-crystal .bar-row{grid-template-columns:72px 1fr 70px}}
+.demo-crystal .track{height:16px;background:var(--soft);border-radius:999px;overflow:hidden}
+.demo-crystal .fill{height:100%;border-radius:999px}
+.demo-crystal input[type=range]{width:100%;accent-color:var(--sic);height:36px}
+.demo-crystal .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.demo-crystal .two{grid-template-columns:1fr}}
+.demo-crystal .box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.demo-crystal .box h3{margin-top:0}
+.demo-crystal .formula{background:var(--soft);border-radius:10px;padding:12px 14px;font-family:Georgia,serif;text-align:center;font-size:17px;margin:10px 0}
+.demo-crystal details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0}
+.demo-crystal summary{cursor:pointer;font-weight:700;min-height:36px;display:flex;align-items:center}
+.demo-crystal .tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--soft);margin-right:6px}
+.demo-crystal .note{font-size:13px;color:var(--muted)}
+.demo-crystal .script{background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:20px;color:#451a03}
+@media(prefers-color-scheme:dark){.demo-crystal .script{background:#29200a;color:#fde68a;border-color:#713f12}}
+.demo-crystal .script ol{padding-left:20px}
+.demo-crystal .script li{margin:8px 0}
+.demo-crystal footer{margin-top:36px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+.demo-crystal .kpi{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.demo-crystal .kpi span{background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:13px}
+    </style>
+    <style>
+.demo-perception button,.demo-perception [role="button"],.demo-perception select,.demo-perception summary,.demo-perception input:not([type="checkbox"], [type="radio"]){ min-height: 2.25rem; }
+.demo-perception{
+        --bg:#f2f4f1;
+        --surface:#ffffff;
+        --surface-2:#e8ece7;
+        --ink:#17211a;
+        --ink-2:#4c5a50;
+        --line:#d3dad2;
+        --accent:#0e7a4f;
+        --accent-ink:#ffffff;
+        --warn:#b3540a;
+        --danger:#c0271b;
+        --ok:#0e7a4f;
+        --chip-bg:#0b120e;
+        --radius:10px;
+      }
+@media (prefers-color-scheme: dark){.demo-perception{
+          --bg:#101511;
+          --surface:#1a211c;
+          --surface-2:#232c26;
+          --ink:#e8efe9;
+          --ink-2:#a7b5ab;
+          --line:#334036;
+          --accent:#2fbf82;
+          --accent-ink:#08130d;
+          --warn:#f0a35e;
+          --danger:#ff7a6e;
+          --ok:#2fbf82;
+          --chip-bg:#05080a;
+        }}
+.demo-perception *{ box-sizing:border-box; }
+.demo-perception,.demo-perception{ margin:0; padding:0; }
+.demo-perception{
+        background:var(--bg);
+        color:var(--ink);
+        font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+        line-height:1.55;
+        -webkit-font-smoothing:antialiased;
+      }
+.demo-perception .wrap{ max-width:1180px; margin:0 auto; padding:20px 16px 48px; }
+.demo-perception h1{ font-size:clamp(24px,4.5vw,36px); line-height:1.2; margin:0 0 8px; letter-spacing:.01em; }
+.demo-perception .lede{ color:var(--ink-2); font-size:16px; max-width:46em; margin:0 0 18px; }
+.demo-perception .lede strong{ color:var(--ink); }
+.demo-perception .stage{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:820px){.demo-perception .stage{ grid-template-columns:1fr; }}
+.demo-perception .view{
+        background:var(--surface);
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+        overflow:hidden;
+      }
+.demo-perception .view-head{
+        display:flex; align-items:center; justify-content:space-between; gap:10px;
+        padding:9px 12px; border-bottom:1px solid var(--line);
+        font-size:14px; font-weight:600;
+      }
+.demo-perception .view-head .tag{ font-size:12px; font-weight:500; color:var(--ink-2); }
+.demo-perception .view canvas{ display:block; width:100%; height:auto; aspect-ratio:16/10; }
+.demo-perception .view.chip{ background:var(--chip-bg); border-color:#26332a; }
+.demo-perception .view.chip .view-head{ color:#dcefe2; border-bottom-color:#26332a; background:#0e1712; }
+.demo-perception .view.chip .view-head .tag{ color:#8fb89c; }
+.demo-perception .alert{
+        margin-top:14px; border-radius:var(--radius); padding:12px 16px;
+        font-size:16px; font-weight:700; display:none; align-items:center; gap:10px;
+        border:1.5px solid transparent;
+      }
+.demo-perception .alert.show{ display:flex; }
+.demo-perception .alert.warn{ background:#fdf1e3; color:#8a4305; border-color:#eec493; }
+.demo-perception .alert.brake{ background:#fdeceb; color:#8f1d12; border-color:#f0aca4; animation:pd-pulse .5s ease-in-out infinite alternate; }
+.demo-perception .alert.safe{ background:#e6f4ec; color:#0b5c3a; border-color:#a9d8bf; }
+@media (prefers-color-scheme: dark){.demo-perception .alert.warn{ background:#33240f; color:#f5bc7d; border-color:#6d4c1e; }
+.demo-perception .alert.brake{ background:#3a1512; color:#ff9d92; border-color:#7c2d24; }
+.demo-perception .alert.safe{ background:#0f2b1d; color:#7fd7ab; border-color:#1f5138; }}
+@keyframes pd-pulse{ from{ filter:brightness(1);} to{ filter:brightness(1.12);} }
+@media (prefers-reduced-motion: reduce){.demo-perception .alert.brake{ animation:none; }}
+.demo-perception .hud{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px; }
+@media (max-width:640px){.demo-perception .hud{ grid-template-columns:repeat(2,1fr); }}
+.demo-perception .stat{
+        background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+        padding:10px 14px;
+      }
+.demo-perception .stat .k{ font-size:12px; color:var(--ink-2); margin-bottom:2px; }
+.demo-perception .stat .v{ font-size:24px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.15; }
+.demo-perception .stat .v small{ font-size:13px; font-weight:500; color:var(--ink-2); }
+.demo-perception .stat .v.danger{ color:var(--danger); }
+.demo-perception .stat .v.ok{ color:var(--ok); }
+.demo-perception .controls{
+        margin-top:14px; background:var(--surface); border:1px solid var(--line);
+        border-radius:var(--radius); padding:14px;
+        display:flex; flex-wrap:wrap; gap:18px 26px; align-items:flex-start;
+      }
+.demo-perception .ctl-group{ display:flex; flex-direction:column; gap:8px; }
+.demo-perception .ctl-group > .label{ font-size:13px; font-weight:600; color:var(--ink-2); }
+.demo-perception .btn-row{ display:flex; flex-wrap:wrap; gap:8px; }
+.demo-perception button{
+        font:inherit; font-size:15px; cursor:pointer;
+        border:1px solid var(--line); background:var(--surface-2); color:var(--ink);
+        border-radius:8px; padding:8px 16px; min-height:40px; min-width:44px;
+      }
+.demo-perception button:hover{ filter:brightness(1.05); }
+.demo-perception button:active{ transform:translateY(1px); }
+.demo-perception button.primary{ background:var(--accent); color:var(--accent-ink); border-color:transparent; font-weight:700; }
+.demo-perception button.danger-btn{ background:var(--danger); color:#fff; border-color:transparent; font-weight:700; }
+.demo-perception button[aria-pressed="true"]{ outline:2px solid var(--accent); outline-offset:1px; font-weight:700; }
+.demo-perception button:disabled{ opacity:.45; cursor:default; transform:none; }
+.demo-perception input[type="range"]{ width:190px; accent-color:var(--accent); min-height:36px; }
+.demo-perception .speed-read{ font-variant-numeric:tabular-nums; font-weight:700; }
+.demo-perception .switch-row{ display:flex; align-items:center; gap:10px; min-height:40px; flex-wrap:wrap; }
+.demo-perception .switch-row input[type="checkbox"]{ width:22px; height:22px; accent-color:var(--accent); }
+.demo-perception .switch-row label{ display:flex; align-items:center; gap:10px; cursor:pointer; padding:6px 0; }
+.demo-perception .hint{ font-size:13px; color:var(--ink-2); max-width:34em; }
+.demo-perception .hint.wide{ max-width:62em; }
+.demo-perception kbd{
+        font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px;
+        background:var(--surface-2); border:1px solid var(--line); border-bottom-width:2px;
+        border-radius:5px; padding:1px 6px;
+      }
+.demo-perception .lower{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+@media (max-width:820px){.demo-perception .lower{ grid-template-columns:1fr; }}
+.demo-perception .panel{
+        background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+        padding:14px 16px;
+      }
+.demo-perception .panel h2{ font-size:17px; margin:0 0 10px; }
+.demo-perception .panel p{ margin:0 0 10px; font-size:14.5px; color:var(--ink-2); }
+.demo-perception .panel p strong{ color:var(--ink); }
+.demo-perception #log{ list-style:none; margin:0; padding:0; font-size:13.5px; max-height:252px; overflow-y:auto; }
+.demo-perception #log li{ padding:6px 0; border-bottom:1px dashed var(--line); display:flex; gap:10px; }
+.demo-perception #log li:last-child{ border-bottom:none; }
+.demo-perception #log .t{ color:var(--ink-2); font-variant-numeric:tabular-nums; flex:none; }
+.demo-perception #log .ev-brake{ color:var(--danger); font-weight:600; }
+.demo-perception #log .ev-warn{ color:var(--warn); font-weight:600; }
+.demo-perception #log .ev-ok{ color:var(--ok); }
+.demo-perception .pipe{ list-style:none; margin:0; padding:0; counter-reset:step; }
+.demo-perception .pipe li{ position:relative; padding:8px 10px 8px 40px; font-size:14.5px; color:var(--ink-2); border-radius:8px; transition:background .25s; }
+.demo-perception .pipe li strong{ color:var(--ink); display:block; font-size:15px; }
+.demo-perception .pipe li.active{ background:var(--surface-2); }
+.demo-perception .pipe li::before{
+        counter-increment:step; content:counter(step);
+        position:absolute; left:4px; top:8px; width:28px; height:28px;
+        border-radius:50%; background:var(--surface-2); color:var(--ink-2);
+        display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;
+        border:1px solid var(--line);
+      }
+.demo-perception .pipe li.active::before{ background:var(--accent); color:var(--accent-ink); border-color:transparent; }
+.demo-perception .pipe li:not(:last-child)::after{
+        content:""; position:absolute; left:17.5px; top:40px; bottom:-2px; width:1.5px; background:var(--line);
+      }
+.demo-perception .pstat{
+        display:block; margin-top:3px; font-size:12.5px; font-weight:600;
+        font-family:ui-monospace,Menlo,Consolas,monospace; color:var(--accent);
+      }
+.demo-perception .pipe li.hot .pstat{ color:var(--danger); }
+.demo-perception .calc{ margin-top:12px; border-top:1px dashed var(--line); padding-top:12px; }
+.demo-perception .calc-line{ font-size:13.5px; color:var(--ink-2); margin-bottom:10px; font-variant-numeric:tabular-nums; }
+.demo-perception .calc-line strong{ color:var(--ink); }
+.demo-perception .calc-line .bad{ color:var(--danger); font-weight:700; }
+.demo-perception .calc-line .good{ color:var(--ok); font-weight:700; }
+.demo-perception .bar-row{ display:flex; align-items:center; gap:10px; margin-top:6px; font-size:12.5px; }
+.demo-perception .bar-row .bl{ flex:none; width:3.2em; color:var(--ink-2); }
+.demo-perception .bar-row b{ flex:none; min-width:4.5em; text-align:right; font-variant-numeric:tabular-nums; }
+.demo-perception .bar{ flex:1; height:12px; background:var(--surface-2); border-radius:6px; overflow:hidden; }
+.demo-perception .bar i{ display:block; height:100%; width:0%; background:var(--danger); border-radius:6px; transition:width .18s linear; }
+.demo-perception .bar i.have{ background:var(--accent); }
+.demo-perception .tasks-panel{ margin-top:14px; }
+.demo-perception .tasks{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+@media (max-width:820px){.demo-perception .tasks{ grid-template-columns:1fr; }}
+.demo-perception .tasks li{
+        display:flex; gap:12px; align-items:flex-start;
+        background:var(--surface-2); border-radius:8px; padding:12px 14px;
+        font-size:14px; color:var(--ink-2);
+      }
+.demo-perception .tasks li strong{ color:var(--ink); display:block; font-size:14.5px; margin-bottom:2px; }
+.demo-perception .tasks .tick{
+        flex:none; width:26px; height:26px; border-radius:50%;
+        border:2px solid var(--line); background:var(--surface); color:transparent;
+        display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px;
+      }
+.demo-perception .tasks li.done .tick{ background:var(--accent); border-color:transparent; color:var(--accent-ink); }
+.demo-perception .tasks li.done strong::after{ content:" · 已完成"; color:var(--ok); font-size:12.5px; }
+.demo-perception footer{ margin-top:22px; font-size:13px; color:var(--ink-2); }
+    </style>
+    <style>
+.demo-workbench{
+        --bg: #f2f4f1;
+        --surface: #ffffff;
+        --surface-2: #e9ede9;
+        --ink: #182019;
+        --ink-2: #4c584f;
+        --ink-3: #7d8a80;
+        --line: #d8ded8;
+        --accent: #14684c;
+        --accent-soft: #e2efe8;
+        --amber: #a86e0d;
+        --amber-soft: #f7ecd4;
+        --red: #b23a2a;
+        --red-soft: #f9e4df;
+        --blue: #2c5f8a;
+        --blue-soft: #e1ebf4;
+        --nav-bg: #131a15;
+        --nav-ink: #c9d4cb;
+        --nav-active: #ffffff;
+        --shadow: 0 1px 2px rgba(20, 32, 24, .06), 0 8px 24px -18px rgba(20, 32, 24, .35);
+      }
+      @media (prefers-color-scheme: dark) {
+        .demo-workbench{
+          --bg: #10140f;
+          --surface: #1a201a;
+          --surface-2: #232b23;
+          --ink: #e9eee9;
+          --ink-2: #aebbae;
+          --ink-3: #7e8c7f;
+          --line: #2e382e;
+          --accent: #57bd8d;
+          --accent-soft: #1d2f26;
+          --amber: #e0aa4e;
+          --amber-soft: #33290f;
+          --red: #e07a63;
+          --red-soft: #38211c;
+          --blue: #7fb0d8;
+          --blue-soft: #1d2c3a;
+          --nav-bg: #0b0f0b;
+          --nav-ink: #93a495;
+          --nav-active: #ffffff;
+          --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -18px rgba(0,0,0,.7);
+        }
+      }
+      .demo-workbench *{ box-sizing: border-box; }
+      .demo-workbench{ -webkit-text-size-adjust: 100%; }
+      .demo-workbench{
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        font-size: 15px;
+        line-height: 1.65;
+      }
+      .demo-workbench .mono{ font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; }
+      .demo-workbench button{ font: inherit; cursor: pointer; }
+      .demo-workbench .shell{ display: flex; min-height: 100vh; }
+      .demo-workbench .content{ flex: 1; min-width: 0; padding: 28px 20px 110px; }
+      .demo-workbench .wrap{ max-width: 880px; margin: 0 auto; }
+      .demo-workbench .sidenav{
+        width: 232px; flex: none; position: sticky; top: 0; height: 100vh;
+        background: var(--nav-bg); color: var(--nav-ink);
+        padding: 26px 16px; display: flex; flex-direction: column; gap: 4px;
+      }
+      .demo-workbench .sidenav .who{ padding: 2px 10px 18px; border-bottom: 1px solid rgba(255,255,255,.09); margin-bottom: 14px; }
+      .demo-workbench .sidenav .who .name{ font-family: "Noto Serif SC", serif; font-weight: 900; font-size: 21px; color: #fff; letter-spacing: .02em; }
+      .demo-workbench .sidenav .who .sub{ font-size: 12px; color: var(--nav-ink); margin-top: 3px; line-height: 1.55; }
+      .demo-workbench .navbtn{
+        display: flex; align-items: center; gap: 11px; width: 100%;
+        min-height: 44px; padding: 9px 10px; border: 0; border-radius: 9px;
+        background: transparent; color: var(--nav-ink); font-size: 14.5px; font-weight: 500;
+        text-align: left;
+      }
+      .demo-workbench .navbtn svg{ flex: none; opacity: .85; }
+      .demo-workbench .navbtn:hover{ background: rgba(255,255,255,.06); }
+      .demo-workbench .navbtn[aria-selected="true"]{ background: rgba(255,255,255,.11); color: var(--nav-active); }
+      .demo-workbench .navbtn[aria-selected="true"] svg{ opacity: 1; }
+      .demo-workbench .sidenav .foot{ margin-top: auto; padding: 12px 10px 0; border-top: 1px solid rgba(255,255,255,.09); font-size: 12px; color: var(--nav-ink); line-height: 1.6; }
+      .demo-workbench .tabbar{ display: none; }
+      @media (max-width: 859px) {
+        .demo-workbench .sidenav{ display: none; }
+        .demo-workbench .content{ padding: 20px 14px 104px; }
+        .demo-workbench .tabbar{
+          display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+          position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+          background: var(--nav-bg); padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+          box-shadow: 0 -6px 20px rgba(0,0,0,.18);
+        }
+        .demo-workbench .tabbar .navbtn{
+          width: auto; min-width: 0; flex-direction: column; gap: 3px; min-height: 52px;
+          padding: 6px 2px 4px; font-size: 11px; border-radius: 8px; justify-content: center;
+          text-align: center; white-space: nowrap;
+        }
+        .demo-workbench .tabbar .navbtn svg{ width: 20px; height: 20px; }
+      }
+      .demo-workbench .panel{ display: none; }
+      .demo-workbench .panel.active{ display: block; }
+      @media (prefers-reduced-motion: no-preference) {
+        .demo-workbench .panel.active{ animation: wbFade .22s ease; }
+        @keyframes wbFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+      }
+      .demo-workbench .p-head{ margin-bottom: 20px; }
+      .demo-workbench .p-kicker{ font-size: 12px; font-weight: 700; letter-spacing: .14em; color: var(--accent); text-transform: uppercase; }
+      .demo-workbench .p-title{ font-family: "Noto Serif SC", serif; font-weight: 900; font-size: 30px; line-height: 1.25; margin: 5px 0 6px; }
+      .demo-workbench .p-lede{ color: var(--ink-2); font-size: 14.5px; max-width: 62ch; margin: 0; }
+      .demo-workbench .sec-title{ font-family: "Noto Serif SC", serif; font-weight: 700; font-size: 18px; margin: 26px 0 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+      .demo-workbench .sec-title .hint{ font-family: "Noto Sans SC", sans-serif; font-size: 12.5px; font-weight: 400; color: var(--ink-3); }
+      .demo-workbench .card{ background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 16px 18px; }
+      .demo-workbench .grid2{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .demo-workbench .grid3{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      @media (max-width: 640px) { .demo-workbench .grid2, .demo-workbench .grid3{ grid-template-columns: 1fr; } }
+      .demo-workbench .stat .num{ font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 30px; line-height: 1.15; color: var(--accent); }
+      .demo-workbench .stat .lab{ font-size: 13.5px; font-weight: 700; margin-top: 2px; }
+      .demo-workbench .stat .sub{ font-size: 12.5px; color: var(--ink-2); margin-top: 2px; }
+      .demo-workbench .tag{ display: inline-block; font-size: 11.5px; font-weight: 700; line-height: 1; padding: 4px 8px; border-radius: 999px; vertical-align: 2px; }
+      .demo-workbench .tag.doing{ background: var(--amber-soft); color: var(--amber); }
+      .demo-workbench .tag.done{ background: var(--accent-soft); color: var(--accent); }
+      .demo-workbench .tag.todo{ background: var(--surface-2); color: var(--ink-2); }
+      .demo-workbench .tag.part{ background: var(--blue-soft); color: var(--blue); }
+      .demo-workbench .tag.key{ background: var(--red-soft); color: var(--red); }
+      .demo-workbench .item{ padding: 13px 2px; border-bottom: 1px solid var(--line); }
+      .demo-workbench .item:last-child{ border-bottom: 0; }
+      .demo-workbench .item .row{ display: flex; align-items: flex-start; gap: 10px; }
+      .demo-workbench .item .row .t{ flex: 1; min-width: 0; font-weight: 700; font-size: 15px; }
+      .demo-workbench .item .row .tag{ flex: none; margin-top: 2px; }
+      .demo-workbench .item .d{ color: var(--ink-2); font-size: 13.5px; margin-top: 3px; }
+      .demo-workbench .item .d b{ color: var(--ink); font-weight: 700; }
+      .demo-workbench ul.tight{ margin: 6px 0 0; padding-left: 19px; }
+      .demo-workbench ul.tight li{ margin: 4px 0; color: var(--ink-2); font-size: 14px; }
+      .demo-workbench ul.tight li b{ color: var(--ink); }
+      .demo-workbench .note{ background: var(--accent-soft); border-radius: 10px; padding: 12px 15px; font-size: 13.5px; color: var(--ink); }
+      .demo-workbench .quickgrid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      @media (max-width: 640px) { .demo-workbench .quickgrid{ grid-template-columns: 1fr 1fr; } }
+      .demo-workbench .quickbtn{
+        display: flex; align-items: center; gap: 10px; text-align: left;
+        background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+        box-shadow: var(--shadow); padding: 13px 15px; color: var(--ink);
+      }
+      .demo-workbench .quickbtn svg{ flex: none; color: var(--accent); }
+      .demo-workbench .quickbtn .qt{ display: block; font-weight: 700; font-size: 14.5px; line-height: 1.35; }
+      .demo-workbench .quickbtn .qd{ display: block; font-size: 12px; color: var(--ink-2); line-height: 1.45; margin-top: 1px; }
+      .demo-workbench .quickbtn:hover{ border-color: var(--accent); }
+      .demo-workbench .phase{ display: grid; grid-template-columns: 168px 1fr; gap: 0; border-bottom: 1px solid var(--line); padding: 13px 2px; }
+      .demo-workbench .phase:last-child{ border-bottom: 0; }
+      .demo-workbench .phase .when .t{ font-weight: 700; font-size: 14.5px; }
+      .demo-workbench .phase .when .d{ font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+      .demo-workbench .phase .body{ font-size: 14px; color: var(--ink-2); }
+      .demo-workbench .phase .body b{ color: var(--ink); }
+      @media (max-width: 640px) { .demo-workbench .phase{ grid-template-columns: 1fr; gap: 4px; } }
+      .demo-workbench .exam{ display: flex; align-items: center; gap: 14px; padding: 11px 2px; border-bottom: 1px solid var(--line); }
+      .demo-workbench .exam:last-child{ border-bottom: 0; }
+      .demo-workbench .exam .date{ flex: none; width: 92px; }
+      .demo-workbench .exam .date .d1{ font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 15px; line-height: 1.3; }
+      .demo-workbench .exam .date .d2{ font-size: 12px; color: var(--ink-3); }
+      .demo-workbench .exam .what{ flex: 1; min-width: 0; }
+      .demo-workbench .exam .what .t{ font-weight: 700; font-size: 14.5px; }
+      .demo-workbench .exam .what .s{ font-size: 12.5px; color: var(--ink-2); margin-top: 1px; }
+      .demo-workbench .exam .cd{ flex: none; text-align: right; min-width: 52px; }
+      .demo-workbench .exam .cd .n{ font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 21px; color: var(--accent); line-height: 1.1; }
+      .demo-workbench .exam .cd .u{ font-size: 11.5px; color: var(--ink-3); }
+      .demo-workbench .exam.past{ opacity: .5; }
+      .demo-workbench .exam.past .cd .n{ color: var(--ink-3); font-size: 13px; }
+      .demo-workbench footer.page{ margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-3); }
+      .demo-workbench a{ color: var(--accent); }
+
+.demo-workbench .panel{ background:transparent; border:none; box-shadow:none; border-radius:0; padding:0; }
+.demo-workbench footer.page{ padding-left:0; padding-right:0; padding-bottom:0; }
+.demo-workbench .sidenav{ top:64px; height:calc(100vh - 64px); }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="wrap topbar-in">
+        <div class="brand">范训鑫 <span>·</span> 课下学AI</div>
+        <a class="navlink" href="#works">作品</a>
+        <a class="navlink" href="#method">协作方法</a>
+        <a class="navlink" href="#lab">提示词实验室</a>
+        <a class="navlink" href="#playground">原理小实验</a>
+        <a class="navlink" href="#tools">工具横评</a>
+        <a class="navlink" href="#thinking">常见问答</a>
+        <a class="navlink" href="#roadmap">下一步</a>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="who">
+            <span class="chip"><b>范训鑫</b></span>
+            <span class="chip">湖北汽车工业学院 · 材料物理 · 大二</span>
+            <span class="chip">方向：车载芯片</span>
+            <span class="chip">湖北十堰</span>
+          </div>
+          <h1>课下钻研 AI，<br />努力把想法做成<span class="hl">作品</span>。</h1>
+          <p class="lede">
+            班主任老师好，这页是想让您看看我课下在做什么。这不是一份“会用聊天机器人”的清单，
+            下面是我课下钻研 AI 真正做出来的东西、我和 AI 协作的完整方法、
+            以及我对大模型原理的理解——<b>包括它什么时候会一本正经地编，以及我怎么验证它</b>。
+            每一件作品都经得起点开看、经得起追问。
+          </p>
+          <div class="stats">
+            <div class="stat"><div class="n">5</div><div class="t">个代表作品<br />逐件拆解</div></div>
+            <div class="stat"><div class="n">5</div><div class="t">件作品<br />2 件 GitHub Pages · 3 件整页并入本页</div></div>
+            <div class="stat"><div class="n">4</div><div class="t">款主流 AI 工具<br />日常在用并横向比较</div></div>
+            <div class="stat"><div class="n">1</div><div class="t">套自己的协作流程<br />从拆需求到验证上线</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="terminal" aria-label="一次真实的 AI 协作过程示意">
+            <div class="term-head">
+              <span class="dot" style="background:#e0655a"></span>
+              <span class="dot" style="background:#e5aa45"></span>
+              <span class="dot" style="background:#3ecf9b"></span>
+              <span class="term-title mono">协作记录 · 掌间星尘 开发节选</span>
+            </div>
+            <div class="term-body mono" id="termBody"></div>
+          </div>
+          <p class="term-cap">右侧是「掌间星尘」开发时的一段真实协作节选：需求是我拆的，代码是 AI 生成的，帧率问题是我在真机上测出来、再让它改的。</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- ============ 作品 ============ -->
+      <section id="works">
+        <div class="sec-head">
+          <div class="sec-kicker mono">WORKS</div>
+          <h2>作品：每一件都拆开讲清楚——AI 做了什么，我做了什么</h2>
+          <p class="sec-sub">我对“用 AI 做东西”的理解是：AI 负责生成，我负责定义问题、做判断、验证对错。下面每件作品都按这个口径拆开，不含糊。</p>
+        </div>
+        <div class="works">
+          <article class="work">
+            <div class="work-top">
+              <div>
+                <h3>掌间星尘</h3>
+                <div class="en mono">PALMFIELD · 手势识别互动</div>
+              </div>
+              <span class="tag">多模态 · 视觉</span>
+            </div>
+            <p>打开摄像头，伸手就能搅动一片星尘：手掌移动带动粒子流，捏合、张开改变星尘的聚散。基于浏览器的手部关键点识别，不装任何 App。</p>
+            <div class="split">
+              <div><span class="k">AI 做了</span><span class="v">粒子系统与 MediaPipe Hands 接入的代码框架</span></div>
+              <div><span class="k">我做了</span><span class="v">定义交互方式、调粒子参数与手势灵敏度、决定降帧策略</span></div>
+              <div><span class="k">我验证</span><span class="v">电脑与手机双端真机实测帧率与识别稳定性，卡顿就回炉改</span></div>
+            </div>
+            <a class="work-link" href="https://kznee.github.io/palmfield/" target="_blank" rel="noopener">打开作品 →</a>
+          </article>
+
+          <article class="work">
+            <div class="work-top">
+              <div>
+                <h3>借光 · 影子拼图</h3>
+                <div class="en mono">JIEGUANG · 光影解谜游戏</div>
+              </div>
+              <span class="tag">游戏 · Canvas</span>
+            </div>
+            <p>一款借光影玩法的拼图小游戏：移动光源与物体，让影子落成目标形状。玩法规则、关卡节奏和难度曲线是我定的，渲染与关卡逻辑和 AI 反复磨了几轮。</p>
+            <div class="split">
+              <div><span class="k">AI 做了</span><span class="v">影子渲染与关卡逻辑的初稿代码</span></div>
+              <div><span class="k">我做了</span><span class="v">玩法规则、关卡设计、难度递进，把“不好玩”的版本推翻重做</span></div>
+              <div><span class="k">我验证</span><span class="v">逐关实测通关路径，确认每关有解且解法不唯一到无聊</span></div>
+            </div>
+            <a class="work-link" href="https://kznee.github.io/jieguang-shadowplay/" target="_blank" rel="noopener">打开作品 →</a>
+          </article>
+
+          <article class="work">
+            <div class="work-top">
+              <div>
+                <h3>Si / SiC / GaN 晶体结构 3D 对比</h3>
+                <div class="en mono">CRYSTAL LAB · Three.js 交互模型</div>
+              </div>
+              <span class="tag">专业结合 · 3D</span>
+            </div>
+            <p>把《材料科学基础》课上学的三种半导体晶体做成可旋转的球棍模型，附室温典型参数对比和耐压—漂移区厚度估算。这是我的专业课与 AI 技能第一次真正接上头。</p>
+            <div class="split">
+              <div><span class="k">AI 做了</span><span class="v">Three.js 场景搭建与交互代码、图表绘制</span></div>
+              <div><span class="k">我做了</span><span class="v">选材逻辑、参数核对、讲解结构（什么是教学示意、什么必须严谨）</span></div>
+              <div><span class="k">我验证</span><span class="v">参数逐项对教材与公开数据，模型明确标注为教学示意而非精确结构</span></div>
+            </div>
+            <button class="work-link" type="button" data-open-demo="demoOverlayCrystal">打开作品 →</button>
+          </article>
+
+          <article class="work">
+            <div class="work-top">
+              <div>
+                <h3>个人工作台</h3>
+                <div class="en mono">MY STUDY DESK · 学习工作台</div>
+              </div>
+              <span class="tag">工具 · 单页应用</span>
+            </div>
+            <p>我现在每天在用的学习工作台：把这学期的考试安排和复习进度、课下学 AI 的计划和进度，都记在一个页面里，打开就能看。共六个分区——总览（下一场考试倒计时、本学期 8 场考试与考查、每周约 23 小时复习投入）、AI 学习计划（AI × 车载芯片长期方向、三条学习主线与阶段安排）、作业看板（先把作业搞懂、再做自测卷）、资料收藏（专业课、AI 原理、工具文档、行业动态）、学习时间（记的不是钱，是时间怎么分配）、重要备忘（六级目标 500 分以上等别忘的事）。里面填的都是我当下的真实安排，不是空模板。</p>
+            <div class="split">
+              <div><span class="k">AI 做了</span><span class="v">单页应用的代码实现：六个分区的界面、桌面侧边栏与手机底部导航、考试倒计时计算</span></div>
+              <div><span class="k">我做了</span><span class="v">内容取舍与分区设计：放哪些分区、填什么内容，以及展示定位——给老师看的只放学习相关，私人记录不放进来</span></div>
+              <div><span class="k">我验证</span><span class="v">六个分区在手机和电脑上逐个点开核对，倒计时天数与考试日期对得上，内容逐项和我的真实安排对齐</span></div>
+            </div>
+            <button class="work-link" type="button" data-open-demo="demoOverlayWorkbench">打开作品 →</button>
+          </article>
+
+          <article class="work">
+            <div class="work-top">
+              <div>
+                <h3>自动驾驶感知演示</h3>
+                <div class="en mono">PERCEPTION DEMO · 车载芯片感知</div>
+              </div>
+              <span class="tag">专业结合 · 感知仿真</span>
+            </div>
+            <p>左边是真实路况，右边是车载芯片“看到”的世界：行人、车道线、障碍物被逐个框出，带类别、置信度和距离。点起步，行人会在路口横穿，进了刹车距离 AEB 自动刹停；还能变道、调速、手动刹车，关掉 AEB 就只预警不刹车。共六个场景——日常路口、夜间行人、雨天湿滑、前车急刹、鬼探头、施工路段，刹车距离按路面附着实时计算，下面还有车速、最近目标距离、TTC 与事件日志。</p>
+            <div class="split">
+              <div><span class="k">AI 做了</span><span class="v">双视图 Canvas 渲染、检测框与跟踪预测、AEB 制动逻辑的代码实现</span></div>
+              <div><span class="k">我做了</span><span class="v">交互与场景设计（起步/变道/调速/AEB 开关）、六个场景的难度设定、采集→检测→跟踪预测→决策制动的讲解结构</span></div>
+              <div><span class="k">我验证</span><span class="v">逐个场景实测刹停行为，开/关 AEB 对比预警与制动差异，核对雨天刹车点提前量与刹车距离计算是否一致</span></div>
+            </div>
+            <button class="work-link" type="button" data-open-demo="demoOverlayPerception">打开作品 →</button>
+          </article>
+        </div>
+        <div class="mini-strip">
+          <b>其他练手：</b>以我自己为主角的 30 秒打地鼠小游戏《Whack-a-范训鑫》（Canvas 游戏循环、计分与加速机制）。练手不藏着——它是我搞懂游戏循环和页面状态管理的过程证据。
+        </div>
+      </section>
+
+      <!-- ============ 协作方法 ============ -->
+      <section id="method">
+        <div class="sec-head">
+          <div class="sec-kicker mono">METHOD</div>
+          <h2>我的 AI 协作流程：六步，每一步都有我自己的活</h2>
+          <p class="sec-sub">点开每一步看具体做法。这套流程是我做完几个项目后沉淀下来的，核心原则只有一句：<b style="color:var(--ink)">AI 可以生成，但不能替我判断。</b></p>
+        </div>
+        <div class="flow" role="tablist" aria-label="协作流程步骤" id="flowBtns"></div>
+        <div class="panel">
+          <h3 id="flowTitle"></h3>
+          <p id="flowDesc"></p>
+          <div class="example mono" id="flowEx"></div>
+        </div>
+      </section>
+
+      <!-- ============ 提示词实验室 ============ -->
+      <section id="lab">
+        <div class="sec-head">
+          <div class="sec-kicker mono">PROMPT LAB</div>
+          <h2>提示词实验室：同一个需求，三版提示词，产出差多远</h2>
+          <p class="sec-sub">任务都是真实的那个——给「掌间星尘」做手势识别。切换版本，看我是怎么一步步把提示词从“许愿”改成“下工单”的。这是我的复盘记录，可用度是我事后按“能不能直接往下做”打的主观分。</p>
+        </div>
+        <div class="ver-btns" id="verBtns"></div>
+        <div class="panel">
+          <pre class="prompt-box mono" id="promptText"></pre>
+          <div class="lab-grid">
+            <div class="lab-box">
+              <h4>这一版加了什么</h4>
+              <ul id="promptAdded"></ul>
+            </div>
+            <div class="lab-box">
+              <h4>产出可用度（我的复盘打分）</h4>
+              <div class="meter"><div id="promptMeter" style="width:30%"></div></div>
+              <div class="meter-note" id="promptNote"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 原理小实验 ============ -->
+      <section id="playground">
+        <div class="sec-head">
+          <div class="sec-kicker mono">UNDER THE HOOD</div>
+          <h2>原理小实验：从噪点里长出图——拖一拖，看 AI 画图的第一步居然是满屏雪花</h2>
+          <p class="sec-sub">现在主流的 AI 画图工具，背后多是<b style="color:var(--ink)">扩散模型（Diffusion）</b>。它画图的方式反直觉：不是一笔一笔画，而是先准备一整屏随机噪点——就是老电视没信号时的那种雪花——然后<b style="color:var(--ink)">一步一步把噪点擦掉</b>，擦到最后，一张图就从雪花里“长”了出来。下面拖动滑块，你就是那个擦噪点的人：左边是满屏雪花，右边是擦干净的图。</p>
+        </div>
+        <div class="play">
+          <p class="scene">玩法：<b>拖动滑块</b>，从第 0 步拖到第 50 步，看图怎么一点点变清楚；也可以点<b>播放</b>，让它自己一步步擦。想看它从另一团雪花里能长出什么，点<b>换一团噪点</b>。</p>
+          <div class="df-stage">
+            <canvas class="df-canvas" id="dfCanvas" width="480" height="360" role="img" aria-label="扩散演示画布：随去噪步数从满屏噪点逐渐变成一辆红色汽车"></canvas>
+          </div>
+          <div class="slider-row">
+            <label for="dfSlider">去噪进度</label>
+            <input type="range" id="dfSlider" min="0" max="50" step="1" value="0" aria-label="去噪步数，0 到 50 步" />
+            <span class="df-step" id="dfStepLabel">第 0 / 50 步</span>
+          </div>
+          <div class="df-phase" id="dfPhase" aria-live="polite"></div>
+          <div class="play-actions">
+            <button class="sample-btn" id="dfPlayBtn" type="button">▶ 播放：从噪点长出图</button>
+            <button class="ver-btn" id="dfNoiseBtn" type="button">换一团噪点</button>
+            <button class="ver-btn" id="dfResetBtn" type="button">回到满屏噪点</button>
+          </div>
+          <div class="play-note">
+            <p><b style="color:var(--ink)">它凭什么能把雪花擦成图？</b>训练时是反着来的：拿一张清楚的照片，一步步往上撒噪点，直到整张图变成纯雪花，让模型看清“每一步加了多少噪”。练得足够多，它就学会了逆操作——给它一屏雪花，它能估算出每一步该擦掉哪部分噪点。擦的顺序也有讲究：先擦出大轮廓（哪里是车、哪里是天），再补小细节（车轮、车窗），和人画画先打草稿再描细节正好反过来——它是先有“草稿的影子”，再慢慢显影。</p>
+            <p><b style="color:var(--ink)">文字提示词起什么作用？</b>你输入的“一辆红色汽车，停在海边”会在每一步去噪时给模型指方向：这团雪花要往“汽车”的样子擦，不要擦成一艘船。换一团噪点、或者换一句提示词，长出来的图就完全不同——这就是为什么同一个提示词每次生成的图都不一样。</p>
+            <p>说明：这是本地运行的示意演示。目标图是预先画好的一张简图，噪点由随机数生成，中间画面用“逐步去噪 + 由糊变清”模拟扩散模型的出图过程，不是真实模型在实时计算。但大顺序是真的：真实的扩散模型同样从纯噪点出发，经过几十步去噪，先定轮廓、后补细节，最后得到一张完整的图。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 工具横评 ============ -->
+      <section id="tools">
+        <div class="sec-head">
+          <div class="sec-kicker mono">TOOLBOX</div>
+          <h2>工具横评：四款 AI 我都在用，主力是谁是比出来的</h2>
+          <p class="sec-sub">我同时在用 Muse、ChatGPT、Grok、Gemini 四款工具，不是哪个火用哪个，而是按任务分工。以下是我自己的使用感受，不是官方参数对比。</p>
+        </div>
+        <div class="tools">
+          <div class="tool">
+            <h3>Muse</h3>
+            <div class="role">当前主力 · 长任务协作</div>
+            <p>写代码、做网页、处理长文档时用得最多。长对话里不容易丢上下文，给它一个大任务能跟完全程。</p>
+            <div class="verdict">我的判断：做“项目”找它，做“一问”未必最快。</div>
+          </div>
+          <div class="tool">
+            <h3>ChatGPT</h3>
+            <div class="role">通用问答 · 多模态</div>
+            <p>生态最全，图片、语音、文件处理都顺手。之前订阅过 Plus，到期后没急着续——先看哪个工具真的值回订阅费。</p>
+            <div class="verdict">我的判断：全能型选手，但要算性价比。</div>
+          </div>
+          <div class="tool">
+            <h3>Grok</h3>
+            <div class="role">实时信息 · 风格直率</div>
+            <p>回答不绕弯，查新鲜事方便。在 Muse 和 Grok 之间选主力时我认真纠结过，它是第一替补。</p>
+            <div class="verdict">我的判断：如果主力用不了，我会毫不犹豫换它。</div>
+          </div>
+          <div class="tool">
+            <h3>Gemini</h3>
+            <div class="role">长上下文 · 谷歌生态</div>
+            <p>和谷歌的文档、网盘生态打通，处理超长材料有优势。但日常协作的手感，我个人排在四款之后。</p>
+            <div class="verdict">我的判断：有专长场景，但不是我的默认选项。</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 常见问答 ============ -->
+      <section id="thinking">
+        <div class="sec-head">
+          <div class="sec-kicker mono">THINKING</div>
+          <h2>可能会被问到的问题</h2>
+          <p class="sec-sub">用工具和懂工具是两回事。下面四个问题是我在课下钻研时真正想通的，点开看我的回答——如果当面被问到，我也是这么答。</p>
+        </div>
+        <div class="qa" id="qaList">
+          <div class="qa-item">
+            <button class="qa-q" type="button" aria-expanded="false">大模型到底在做什么？它“懂”我说的话吗？<span class="arr">＋</span></button>
+            <div class="qa-a">
+              <p>技术上，它在做一件事：<b>根据前面的全部文本，预测下一个词的概率分布，然后采样</b>。它最核心的动作，就是根据前文预测下一个词，再把选出的词接回去继续预测。把预测这件事在海量文本上练到极致，就涌现出了推理、翻译、写代码这些看起来像“理解”的能力。</p>
+              <p>我的判断：它有没有主观意义上的“懂”是个哲学问题，但工程上更重要的是另一点——<b>它的流畅不等于正确</b>。它优化的是“像不像正确答案”，不是“是不是正确答案”。想通这一点，就不会盲信它的任何输出。</p>
+            </div>
+          </div>
+          <div class="qa-item">
+            <button class="qa-q" type="button" aria-expanded="false">AI 为什么会一本正经地编造？（幻觉）<span class="arr">＋</span></button>
+            <div class="qa-a">
+              <p>因为它的目标是生成“概率上最像样的下文”，不是“查证过的事实”。当它不知道答案时，分布里没有“认输”这个选项，采样照样会落在一个词上——于是编出一个格式完美、细节齐全、但根本不存在的文献、数据或事件。</p>
+              <p>我吃过实际的亏：在查专利和标准资料时，AI 给的数字和条目看起来非常可信，但只有回到国家知识产权局官网、知网标准库这类一手来源才能定案。<b>从那以后我的规矩是：凡是要写进正式材料的数据，必须有一手来源，AI 给的只能当线索。</b></p>
+            </div>
+          </div>
+          <div class="qa-item">
+            <button class="qa-q" type="button" aria-expanded="false">现在很火的 Agent（智能体）和聊天机器人有什么区别？<span class="arr">＋</span></button>
+            <div class="qa-a">
+              <p>聊天机器人是“一问一答”；Agent 是给模型装上<b>工具和循环</b>：它能自己拆解任务、调用搜索/代码/文件工具、看执行结果、再决定下一步，直到把一件事做完。本质是“大模型 + 工具使用 + 观察—行动循环 + 记忆”。</p>
+              <p>我现在正在学 AI 应用开发和 Agent 方向。我的看法是：Agent 让 AI 从“顾问”变成“实习生”——但实习生更要盯紧，<b>它能连续做十步，也能连续错十步</b>，所以检查点要设在流程里，而不是最后。</p>
+            </div>
+          </div>
+          <div class="qa-item">
+            <button class="qa-q" type="button" aria-expanded="false">AI 生成的代码，为什么我坚持要自己验？<span class="arr">＋</span></button>
+            <div class="qa-a">
+              <p>因为它生成的代码同样是“概率上最像对的”，不是“保证对的”。常见翻车方式很具体：调用不存在的接口、边界情况没处理、在我的手机上帧率直接崩掉。这些问题<b>光看代码看不出来，跑一遍就现形</b>。</p>
+              <p>所以我的流程里“运行验证”是独立的一步，不许跳过：真机打开、按极端情况操作、看控制台报错。验不过就把报错原样喂回去让它改——这也是我和 AI 协作时最有成就感的环节，因为那一刻是我在纠正它。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 下一步 ============ -->
+      <section id="roadmap">
+        <div class="sec-head">
+          <div class="sec-kicker mono">ROADMAP</div>
+          <h2>下一步：从“会用 AI 做网页”到“AI × 我的专业”</h2>
+          <p class="sec-sub">不贪多。我的路线是先把工具用熟、把原理搞懂，再往材料物理和车载芯片的方向上接——那才是我和纯计算机同学不一样的地方。</p>
+        </div>
+        <div class="road">
+          <div class="road-col">
+            <h3>已打下的基础 <span class="st">已完成</span></h3>
+            <ul>
+              <li>HTML / CSS / JavaScript 网页开发，能独立把想法做成上线页面</li>
+              <li>GitHub 项目管理与 GitHub Pages 部署全流程</li>
+              <li>提示词工程：从许愿式提问到工单式下达（见上方实验室）</li>
+              <li>多模态 API 接入经验：手势识别、Canvas 渲染、3D 场景</li>
+              <li>四款主流大模型工具的长期横向使用与比较</li>
+            </ul>
+          </div>
+          <div class="road-col now">
+            <h3>正在学 <span class="st">进行中</span></h3>
+            <ul>
+              <li>Python：补上编程基本功，不只停留在让 AI 代写</li>
+              <li>AI 应用开发：调用大模型 API 做真正带“智能”的应用</li>
+              <li>AI Agent：工具调用、任务拆解、多步执行的原理与实践</li>
+              <li>大模型原理：Transformer、注意力机制、微调与 RAG 的基本概念</li>
+            </ul>
+          </div>
+          <div class="road-col">
+            <h3>想探索的方向 <span class="st">下一步</span></h3>
+            <ul>
+              <li>材料数据的可视化与交互工具（晶体对比页是第一步）</li>
+              <li>关注 AI 在车载芯片与智能座舱里的真实落地方式</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>课下学AI · 范训鑫</span>
+        <span>这一页本身，也是我用文中那套六步流程与 AI 协作完成的作品。</span>
+      </div>
+    </footer>
+
+<div class="demo-overlay" id="demoOverlayCrystal" hidden role="dialog" aria-modal="true" aria-label="Si / SiC / GaN 晶体结构 3D 对比">
+      <div class="demo-bar"><span class="demo-title">Si / SiC / GaN 晶体结构 3D 对比</span><button class="demo-close" type="button" data-close-demo>← 返回作品集</button></div>
+      <div class="demo-crystal">
+<div class="wrap">
+<p style="margin:0;font-size:13px;letter-spacing:.12em;color:var(--muted)">材料物理 · 半导体材料 · 车载功率器件</p>
+<h1>硅之外：<span>SiC</span> 与 <em>GaN</em><br>为什么电车要用宽禁带？</h1>
+<p class="lead">同是半导体，换一种晶体，耐压、耐热和开关速度可以差一个数量级。这个页面把 <strong>Si（硅）· 4H-SiC（碳化硅）· GaN（氮化镓）</strong> 的晶体结构、关键参数和车载应用放在一起对比——结构决定性质，性质决定用在哪。</p>
+<div class="kpi"><span>🧪 3 种晶体 · 可拖动旋转</span><span>⚡ 击穿场相差约 10 倍</span><span>🚗 落点：800V 电驱 / 车载充电</span></div>
+
+<div class="conclusion">
+<div><b>Si — 便宜成熟</b><p>工艺最成熟、成本最低。至今仍统治逻辑芯片、低压控制和大部分功率器件。</p></div>
+<div><b>SiC — 耐高压耐高温</b><p>击穿场约为 Si 的 9 倍、导热约为 2.5 倍。800V 主驱逆变器的主流选择。</p></div>
+<div><b>GaN — 开关最快</b><p>电子迁移快、开关损耗低。适合高频、小体积的车载充电器与 DC-DC。</p></div>
+</div>
+
+<h2>一、晶体结构：先看原子怎么排</h2>
+<p class="sub">拖动模型旋转。球的大小按原子半径示意，棒为共价键。SiC 与 GaN 均为教学示意模型——SiC 只画出 4H 多型体的层状特征，不等同于完整大单胞的精确坐标。</p>
+<div class="controls" role="group" aria-label="视图控制">
+<button id="btnRotate" class="active">⏸ 暂停自动旋转</button>
+<button id="btnBond" class="active">显示化学键：开</button>
+<button id="btnReset">复位视角</button>
+</div>
+<div class="grid3">
+<article class="card">
+<div class="card-head" style="border-color:var(--si)"><h3>Si · 硅</h3><p>金刚石立方结构 · 立方晶系 · Fd<span style="text-decoration:overline">3</span>m<br>晶格常数 a = 0.543 nm</p></div>
+<div class="canvas-box" id="cv-si"><span class="hint">拖动旋转 · 滚轮缩放</span></div>
+<div class="legend"><span><i class="dot" style="background:#64748b"></i>Si 硅原子</span><span>每个 Si 与 4 个近邻成四面体键，键角 109.5°</span></div>
+</article>
+<article class="card">
+<div class="card-head" style="border-color:var(--sic)"><h3>4H-SiC · 碳化硅</h3><p>六方结构 · P6<sub>3</sub>mc · 4H 多型体<br>a = 0.308 nm，c = 1.005 nm</p></div>
+<div class="canvas-box" id="cv-sic"><span class="hint">拖动旋转 · 滚轮缩放</span></div>
+<div class="legend"><span><i class="dot" style="background:#0891b2"></i>Si</span><span><i class="dot" style="background:#1f2937"></i>C 碳（小）</span><span>Si–C 双原子层沿 c 轴以 ABCB 周期堆垛，“4H”即 4 层一周期、六方对称。</span></div>
+</article>
+<article class="card">
+<div class="card-head" style="border-color:var(--gan)"><h3>GaN · 氮化镓</h3><p>纤锌矿结构 · 六方晶系 · P6<sub>3</sub>mc<br>a = 0.319 nm，c = 0.519 nm</p></div>
+<div class="canvas-box" id="cv-gan"><span class="hint">拖动旋转 · 滚轮缩放</span></div>
+<div class="legend"><span><i class="dot" style="background:#d97706"></i>Ga 镓</span><span><i class="dot" style="background:#2563eb"></i>N 氮（小）</span><span>Ga 与 N 各自六方密堆、互相穿插，沿 c 轴有自发极化——这是 GaN 能形成高密度二维电子气的基础。</span></div>
+</article>
+</div>
+<p class="note" style="margin-top:10px">一句话抓住区别：<strong>Si 是单元素、金刚石立方；SiC 和 GaN 都是双元素化合物、六方纤锌矿家族。</strong>化合物半导体多了组分与极化，禁带更宽，但生长更难、缺陷更多、价格也更高——后面的所有取舍都从这里来。</p>
+
+<h2>二、关键参数：把“宽禁带”量化</h2>
+<p class="sub">室温典型值，取自 Sze《Physics of Semiconductor Devices》、Baliga《Fundamentals of Power Semiconductor Devices》及材料厂商数据手册的常用口径。实际数值随多型体、掺杂、温度与测试条件浮动，引用时请说“典型值”。</p>
+<div class="scrollx"><table>
+<tr><th>参数（室温）</th><th>Si</th><th>4H-SiC</th><th>GaN</th><th>意味着什么</th></tr>
+<tr><td>禁带宽度 E<sub>g</sub></td><td class="num">1.12 eV</td><td class="num">3.26 eV</td><td class="num best">3.40 eV</td><td>越大，本征载流子越少，越能高温工作、漏电越小</td></tr>
+<tr><td>击穿电场 E<sub>c</sub></td><td class="num">0.3 MV/cm</td><td class="num">2.8 MV/cm</td><td class="num best">3.3 MV/cm</td><td>同等耐压下漂移区可薄约 10 倍——低导通电阻的源头</td></tr>
+<tr><td>热导率 κ</td><td class="num">150 W/(m·K)</td><td class="num best">370 W/(m·K)</td><td class="num">130 W/(m·K)</td><td>SiC 散热明显占优；GaN 本身不高，靠封装与衬底补</td></tr>
+<tr><td>电子迁移率 μ<sub>n</sub>（体材料）</td><td class="num best">~1400 cm²/(V·s)</td><td class="num">~950 cm²/(V·s)</td><td class="num">~1250 cm²/(V·s)</td><td>Si 并不差；GaN 的杀手锏是异质结二维电子气，可达 ~2000</td></tr>
+<tr><td>饱和漂移速度 v<sub>sat</sub></td><td class="num">1.0×10⁷ cm/s</td><td class="num">2.0×10⁷ cm/s</td><td class="num best">2.5×10⁷ cm/s</td><td>决定高频上限，GaN 最适合高频开关</td></tr>
+<tr><td>相对介电常数 ε<sub>r</sub></td><td class="num">11.7</td><td class="num">9.7</td><td class="num">9.0</td><td>与 μ、E<sub>c</sub> 一起进入 Baliga 优值</td></tr>
+<tr><td>Baliga 优值（归一化）</td><td class="num">1</td><td class="num">~450</td><td class="num best">~900</td><td>∝ ε·μ·E<sub>c</sub>³，击穿场的三次方是差距的主因（估算口径）</td></tr>
+</table></div>
+
+<div class="bars" style="margin-top:14px">
+<h3 style="margin-top:0">条形图：差距主要不在一个维度</h3>
+<p class="note">击穿电场与热导率按线性比例绘制；Baliga 优值差距过大，只作示意（见上表）。</p>
+<div id="chartEc"></div>
+<div id="chartK"></div>
+</div>
+
+<h2>三、动手算一笔：耐压越高，差距越大</h2>
+<p class="sub">漂移区厚度近似 W ≈ 2V<sub>B</sub> / E<sub>c</sub>（三角形电场分布的简化估算）。拖动目标耐压，看三种材料需要的厚度——越薄，导通电阻越低、芯片可以做得越小。</p>
+<div class="box">
+<label for="volt" style="font-weight:700">目标阻断电压 V<sub>B</sub>：<span id="voltVal">800 V</span>（电车 800V 平台的典型量级）</label>
+<input type="range" id="volt" min="200" max="1200" step="50" value="800">
+<div id="driftChart"></div>
+<p class="note" id="driftNote"></p>
+<div class="formula">R<sub>on,sp</sub> ∝ V<sub>B</sub>² / ( ε · μ · E<sub>c</sub>³ ) &nbsp;—— Baliga 关系：导通电阻对击穿场是三次方敏感</div>
+<p style="margin-bottom:0">这就是为什么 400V 时 Si 还能勉强竞争，一到 800V、1200V，Si 的漂移区又厚又高阻，发热和体积都压不住，SiC 几乎没有对手。</p>
+</div>
+
+<h2>四、落到车上：谁用在哪，为什么</h2>
+<div class="scrollx"><table>
+<tr><th>车载部件</th><th>电压 / 功率特征</th><th>主流选择</th><th>理由</th></tr>
+<tr><td><strong>主驱逆变器</strong>（电机驱动）</td><td>800V · 上百 kW</td><td><strong>SiC MOSFET</strong></td><td>高耐压 + 高导热 + 低开关损耗，直接换来续航与更小的散热器；特斯拉 Model 3 起规模化上车</td></tr>
+<tr><td><strong>车载充电器 OBC</strong></td><td>400/800V · 6.6–22 kW</td><td>SiC 与 GaN 并存</td><td>追求高频小型化时 GaN 占优；追求耐压裕量与散热时用 SiC</td></tr>
+<tr><td><strong>DC-DC 变换器</strong></td><td>高压转 12/48V</td><td><strong>GaN</strong> 增长最快</td><td>开关频率可达 MHz 级，电感、电容体积大幅缩小</td></tr>
+<tr><td><strong>控制、逻辑、低压功率</strong></td><td>≤200V 为主</td><td><strong>Si</strong> 仍是主力</td><td>成本与成熟度无可替代；MCU、传感器、低压 MOSFET 长期用 Si</td></tr>
+</table></div>
+<div class="two" style="margin-top:14px">
+<div class="box"><h3>SiC 的代价</h3><ul><li>衬底生长慢、良率低，器件价格数倍于 Si</li><li>栅氧可靠性与阈值漂移仍是研究热点</li><li>位错等晶体缺陷直接影响大电流器件良率——这正是材料物理要解决的问题</li></ul></div>
+<div class="box"><h3>GaN 的代价</h3><ul><li>多为横向器件（HEMT），耐压继续上探难于 SiC 的纵向结构</li><li>缺乏雪崩耐量，动态导通电阻需专门管理</li><li>常生长在 Si / SiC 衬底上，晶格失配带来缺陷与热管理问题</li></ul></div>
+</div>
+
+<footer>
+<p><strong>数据与口径：</strong>禁带宽度、击穿电场、热导率、迁移率等为室温典型值，综合 S. M. Sze &amp; K. K. Ng, <em>Physics of Semiconductor Devices</em>；B. J. Baliga, <em>Fundamentals of Power Semiconductor Devices</em>；以及 Cree/Wolfspeed、Infineon 等厂商公开数据手册的常用数值。不同来源对 SiC 热导率给出 320–490 W/(m·K) 区间，本页取器件级常用值 370。3D 模型为教学示意：原子相对大小与键长经缩放以便观察，不代表精确键长比例。Baliga 优值为按 ε·μ·E<sub>c</sub>³ 的归一化估算，用于比较量级，不作器件设计依据。</p>
+</footer>
+</div>
+      </div>
+    </div>
+
+    <div class="demo-overlay" id="demoOverlayPerception" hidden role="dialog" aria-modal="true" aria-label="自动驾驶感知演示">
+      <div class="demo-bar"><span class="demo-title">自动驾驶感知演示</span><button class="demo-close" type="button" data-close-demo>← 返回作品集</button></div>
+      <div class="demo-perception">
+<div class="wrap">
+      <h1>自动驾驶感知演示</h1>
+      <p class="lede">你来开这辆车过马路。另一块屏幕是<strong>车载芯片「看到」的世界</strong>：它不认识颜色和故事，只认一个个检测框——行人、车道线、障碍物，各自带着类别、距离和置信度。当行人踏上斑马线、进入刹车距离，<strong>AEB 自动紧急制动</strong>会替你把车刹停。这次还加了<strong>夜间、雨天、前车急刹、「鬼探头」、施工路段</strong>五种更难的场景：光线、附着系数、遮挡都会真实改变芯片的检测距离和刹车距离——换着场景试，你就知道这块芯片到底在忙什么了。</p>
+
+      <div class="stage">
+        <section class="view" aria-label="真实路况画面">
+          <div class="view-head"><span>真实路况 · 你的眼睛</span><span class="tag" id="envTag">晴天 · 干燥路面</span></div>
+          <canvas id="worldCanvas" width="800" height="500"></canvas>
+        </section>
+        <section class="view chip" aria-label="芯片感知画面">
+          <div class="view-head"><span>芯片感知 · 检测输出</span><span class="tag" id="fpsTag">推理中</span></div>
+          <canvas id="chipCanvas" width="800" height="500"></canvas>
+        </section>
+      </div>
+
+      <div class="alert" id="alertBox" role="alert"></div>
+
+      <div class="hud" aria-label="行车状态">
+        <div class="stat"><div class="k">车速</div><div class="v"><span id="hudSpeed">0</span> <small>km/h</small></div></div>
+        <div class="stat"><div class="k">最近目标距离</div><div class="v" id="hudDistWrap"><span id="hudDist">—</span> <small>m</small></div></div>
+        <div class="stat"><div class="k">碰撞时间 TTC</div><div class="v" id="hudTtcWrap"><span id="hudTtc">—</span> <small>s</small></div></div>
+        <div class="stat"><div class="k">系统状态</div><div class="v" id="hudState" style="font-size:19px;padding-top:4px;">已停车</div></div>
+      </div>
+
+      <div class="controls">
+        <div class="ctl-group">
+          <span class="label">驾驶</span>
+          <div class="btn-row">
+            <button id="btnGo" class="primary">▶ 起步</button>
+            <button id="btnBrake" class="danger-btn">■ 刹车</button>
+            <button id="btnLaneUp">↑ 变道</button>
+            <button id="btnLaneDown">↓ 变道</button>
+          </div>
+          <span class="hint">键盘：<kbd>W</kbd>/<kbd>↑</kbd> 加速 · <kbd>S</kbd>/<kbd>↓</kbd> 减速 · <kbd>A</kbd> <kbd>D</kbd> 变道 · <kbd>空格</kbd> 急刹</span>
+        </div>
+        <div class="ctl-group">
+          <span class="label">目标速度 <span class="speed-read" id="speedRead">36 km/h</span></span>
+          <input type="range" id="speedRange" min="10" max="72" step="2" value="36" aria-label="目标速度（公里每小时）" />
+          <span class="hint">速度越快，刹停需要的距离越长——盯着右侧讲解里的「刹车距离」条看。</span>
+        </div>
+        <div class="ctl-group">
+          <span class="label">临时加目标</span>
+          <div class="btn-row">
+            <button id="btnPed">放一个行人过马路</button>
+            <button id="btnObstacle">放一个障碍物</button>
+            <button id="pdBtnReset">重置</button>
+          </div>
+          <div class="switch-row">
+            <label><input type="checkbox" id="chkAeb" checked /> AEB 自动紧急制动</label>
+            <label><input type="checkbox" id="chkBoxes" checked /> 显示检测框</label>
+          </div>
+        </div>
+        <div class="ctl-group" style="flex-basis:100%;">
+          <span class="label">场景（越往后越难）</span>
+          <div class="btn-row" id="scenRow">
+            <button data-scen="day" aria-pressed="true">晴天路口</button>
+            <button data-scen="night" aria-pressed="false">夜间行人</button>
+            <button data-scen="rain" aria-pressed="false">雨天湿滑</button>
+            <button data-scen="follow" aria-pressed="false">前车急刹</button>
+            <button data-scen="dart" aria-pressed="false">鬼探头</button>
+            <button data-scen="construction" aria-pressed="false">施工路段</button>
+          </div>
+          <span class="hint wide" id="scenDesc"></span>
+        </div>
+      </div>
+
+      <div class="lower">
+        <section class="panel" aria-label="感知事件日志">
+          <h2>感知事件日志</h2>
+          <ul id="log"></ul>
+        </section>
+        <section class="panel" aria-label="感知到制动的流程">
+          <h2>从「看见」到「刹停」，芯片做了四件事</h2>
+          <ol class="pipe">
+            <li id="pl1"><strong>采集</strong>摄像头拍下画面，毫米波雷达同时测距测速——眼睛看形状，雷达量距离。<span class="pstat" id="ps1">—</span></li>
+            <li id="pl2"><strong>检测</strong>神经网络在画面里逐帧找目标，输出检测框：这是什么、在哪、多确信。<span class="pstat" id="ps2">—</span></li>
+            <li id="pl3"><strong>跟踪与预测</strong>把连续帧里的同一个目标串起来（框上的 #编号就是跟踪 ID），估算它的速度和走向，算出 TTC（还剩几秒相撞）。<span class="pstat" id="ps3">—</span></li>
+            <li id="pl4"><strong>决策与制动</strong>剩余距离不够刹停且驾驶员没反应，AEB 直接接管刹车——不等你踩。<span class="pstat" id="ps4">—</span></li>
+          </ol>
+          <div class="calc" aria-label="刹车距离实时计算">
+            <div class="calc-line" id="brakeCalc">车辆静止。起步后，这里会实时算出：以现在的速度刹车，要滑出多远才停得住。</div>
+            <div class="bar-row"><span class="bl">需要</span><div class="bar"><i id="barNeed"></i></div><b id="needVal">0 m</b></div>
+            <div class="bar-row"><span class="bl">现有</span><div class="bar"><i id="barHave" class="have"></i></div><b id="haveVal">—</b></div>
+          </div>
+          <p style="margin-top:12px;">真实车载芯片（如地平线征程、英伟达 Orin）每秒要跑几十帧这样的流程，晚 100 毫秒，车就多冲出去一截。这也是为什么速度越高、刹车点必须越靠前。</p>
+        </section>
+      </div>
+
+      <section class="panel tasks-panel" aria-label="动手验证任务">
+        <h2>自己动手验证三件事（做完自动打勾）</h2>
+        <ul class="tasks">
+          <li id="task1"><span class="tick">✓</span><div><strong>让 AEB 救你一次</strong>开着 AEB 起步，什么都别做，等它自己刹停在行人面前。</div></li>
+          <li id="task2"><span class="tick">✓</span><div><strong>自己救自己一次</strong>关掉 AEB 起步，靠空格急刹或变道，在撞上之前停住。</div></li>
+          <li id="task3"><span class="tick">✓</span><div><strong>在雨天刹停一次</strong>切到「雨天湿滑」，感受附着系数变小后，刹车点被迫提前了多少。</div></li>
+        </ul>
+      </section>
+
+      <footer>教学演示：检测框、距离与制动逻辑为简化模拟，数值按比例缩放，不代表任何真实车型的参数。</footer>
+    </div>
+      </div>
+    </div>
+
+    <div class="demo-overlay" id="demoOverlayWorkbench" hidden role="dialog" aria-modal="true" aria-label="个人工作台">
+      <div class="demo-bar"><span class="demo-title">个人工作台 · 学习与 AI</span><button class="demo-close" type="button" data-close-demo>← 返回作品集</button></div>
+      <div class="demo-workbench">
+<div class="shell">
+      <nav class="sidenav" aria-label="工作台分区">
+        <div class="who">
+          <div class="name">范训鑫</div>
+          <div class="sub">湖北汽车工业学院 · 材料物理 大二<br />方向：车载芯片 · 湖北十堰</div>
+        </div>
+        <button class="navbtn" data-target="overview" aria-selected="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>总览</button>
+        <button class="navbtn" data-target="plan" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>AI 学习计划</button>
+        <button class="navbtn" data-target="board" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>作业看板</button>
+        <button class="navbtn" data-target="library" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4-7 4V4.5a1 1 0 0 1 1-1z"/></svg>资料收藏</button>
+        <button class="navbtn" data-target="timelog" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>学习时间</button>
+        <button class="navbtn" data-target="memo" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 6.5 3 3.5H7l3-3.5z"/><path d="M12 14v6.5"/></svg>重要备忘</button>
+        <div class="foot">内容更新于<br /><span class="mono">2026-11-22</span> · 星期日</div>
+      </nav>
+
+      <main class="content">
+        <div class="wrap">
+
+          <!-- 1 总览 -->
+          <section class="panel active" id="panel-overview" aria-label="总览">
+            <div class="p-head">
+              <div class="p-kicker">Overview · 总览</div>
+              <h1 class="p-title">课下钻研 AI，努力把想法做成作品</h1>
+              <p class="p-lede">这页是我的学习工作台：这学期的考试安排和复习进度、课下学 AI 的计划和进度，都记在这里。我的专业是材料物理，方向是车载芯片——课内打基础，课下学 AI，想把两者慢慢接起来。</p>
+            </div>
+
+            <div class="grid3">
+              <div class="card stat"><div class="num" id="nx-num">—</div><div class="lab" id="nx-lab">下一场考试</div><div class="sub" id="nx-sub">正在计算倒计时…</div></div>
+              <div class="card stat"><div class="num">8</div><div class="lab">本学期考试与考查</div><div class="sub">12 月 10 日起，至 12 月 31 日结束</div></div>
+              <div class="card stat"><div class="num">23<span style="font-size:16px"> h/周</span></div><div class="lab">复习投入</div><div class="sub">工作日约 3 小时 · 周末每天 4 小时</div></div>
+            </div>
+
+            <h2 class="sec-title">考试安排 <span class="hint">倒计时按打开当天自动计算</span></h2>
+            <div class="card" style="padding-top:6px;padding-bottom:6px">
+              <div class="exam" data-date="2026-12-10">
+                <div class="date"><div class="d1">12-10</div><div class="d2">周四</div></div>
+                <div class="what"><div class="t">计算材料学</div><div class="s">考查 · 开卷，带老师讲义（打印版）</div></div>
+                <div class="cd"><div class="n">–</div><div class="u">天后</div></div>
+              </div>
+              <div class="exam" data-date="2026-12-12">
+                <div class="date"><div class="d1">12-12</div><div class="d2">周六 · 下午</div></div>
+                <div class="what"><div class="t">大学英语六级 CET-6（笔试）</div><div class="s">目标 500 分以上，听力是重点补的弱项</div></div>
+                <div class="cd"><div class="n">–</div><div class="u">天后</div></div>
+              </div>
+              <div class="exam" data-date="2026-12-13">
+                <div class="date"><div class="d1">12-13</div><div class="d2">周日 · 上午</div></div>
+                <div class="what"><div class="t">复变函数与积分变换</div><div class="s">考查</div></div>
+                <div class="cd"><div class="n">–</div><div class="u">天后</div></div>
+              </div>
+              <div class="exam" data-date="2026-12-13">
+                <div class="date"><div class="d1">12-13</div><div class="d2">周日 · 晚上</div></div>
+                <div class="what"><div class="t">线性代数</div><div class="s">考试 · 同一天第二场</div></div>
+                <div class="cd"><div class="n">–</div><div class="u">天后</div></div>
+              </div>
+              <div class="exam" data-date="2026-12-26">
+                <div class="date"><div class="d1">12-26</div><div class="d2">周六</div></div>
+                <div class="what"><div class="t">大学物理 A2</div><div class="s">考试</div></div>
+                <div class="cd"><div class="n">–</div><div class="u">天后</div></div>
+              </div>
+              <div class="exam" data-date="2026-12-28">
+                <div class="date"><div class="d1">12-28</div><div class="d2">周一</div></div>
+                <div class="what"><div class="t">物理化学 <span class="tag key">最重要</span></div><div class="s">考试 · 学分高、绩点权重大</div></div>
+                <div class="cd"><div class="n">–</div><div class="u">天后</div></div>
+              </div>
+              <div class="exam" data-date="2026-12-29">
+                <div class="date"><div class="d1">12-29</div><div class="d2">周二</div></div>
+                <div class="what"><div class="t">材料科学基础 <span class="tag key">最重要</span></div><div class="s">考试 · 学分高、绩点权重大</div></div>
+                <div class="cd"><div class="n">–</div><div class="u">天后</div></div>
+              </div>
+              <div class="exam" data-date="2026-12-31">
+                <div class="date"><div class="d1">12-31</div><div class="d2">周四 · 晚</div></div>
+                <div class="what"><div class="t">大学英语六级（课程考试）</div><div class="s">18:10–20:10 · 5302 教室，与 CET-6 不是同一场</div></div>
+                <div class="cd"><div class="n">–</div><div class="u">天后</div></div>
+              </div>
+            </div>
+            <div class="note" style="margin-top:12px">复习优先级：<b>材料科学基础、物理化学最重要</b>，复变函数与线性代数其次；打法是先考的先复习，考完一场再转下一批。毛概是开卷考试，时间还没通知；形势与政策、习概没有考试，不占复习时间。</div>
+
+            <h2 class="sec-title">课下在学什么：AI</h2>
+            <div class="grid2">
+              <div class="card">
+                <div style="font-weight:700">不只会用，还想懂原理</div>
+                <ul class="tight">
+                  <li>大模型怎么“选词”：<b>Softmax、Temperature</b> 对概率分布的影响</li>
+                  <li><b>注意力机制</b>：模型读一句话时，词与词之间怎么互相“看”</li>
+                  <li><b>Token 切分</b>：一句话进模型之前，怎么被切成小块</li>
+                  <li>模型为什么会“一本正经地编”——以及怎么<b>查证它的输出</b></li>
+                </ul>
+              </div>
+              <div class="card">
+                <div style="font-weight:700">动手做，而不只是看</div>
+                <ul class="tight">
+                  <li>用 <b>HTML / CSS / JavaScript</b> 做轻量网页和互动页面</li>
+                  <li>用 <b>GitHub / GitHub Pages</b> 管理和发布自己的页面</li>
+                  <li>正在学 <b>Python</b>，往 AI 应用开发和 <b>AI Agent</b> 方向走</li>
+                  <li>日常用 <b>Muse、ChatGPT、Grok、Gemini</b> 四款工具，横向比较着学</li>
+                </ul>
+              </div>
+            </div>
+
+            <h2 class="sec-title">学习节奏</h2>
+            <div class="card">
+              <div class="item" style="padding-top:2px">
+                <div class="row"><div class="t">学期中：课程优先，AI 保持轻量节奏</div><span class="tag doing">当前阶段</span></div>
+                <div class="d">临近期末，先把专业课复习放在第一位；AI 这边只保留每天看一点行业动态、推进一点点原理学习，不抢复习的时间。</div>
+              </div>
+              <div class="item" style="padding-bottom:2px">
+                <div class="row"><div class="t">假期：集中补编程和做小作品</div><span class="tag todo">下一步</span></div>
+                <div class="d">假期时间整块，再集中学 Python、把原理小实验做深，并尝试做和专业相关的小演示。</div>
+              </div>
+            </div>
+
+            <h2 class="sec-title">其他分区 <span class="hint">点一下直接跳过去</span></h2>
+            <div class="quickgrid">
+              <button class="quickbtn" data-target="plan"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg><span><span class="qt">AI 学习计划</span><span class="qd">三条主线与阶段安排</span></span></button>
+              <button class="quickbtn" data-target="board"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg><span><span class="qt">作业看板</span><span class="qd">当前任务与复习推进</span></span></button>
+              <button class="quickbtn" data-target="library"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4-7 4V4.5a1 1 0 0 1 1-1z"/></svg><span><span class="qt">资料收藏</span><span class="qd">专业课、AI 原理与工具</span></span></button>
+              <button class="quickbtn" data-target="timelog"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span><span class="qt">学习时间</span><span class="qd">每周 23 小时怎么分配</span></span></button>
+              <button class="quickbtn" data-target="memo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 6.5 3 3.5H7l3-3.5z"/><path d="M12 14v6.5"/></svg><span><span class="qt">重要备忘</span><span class="qd">六级目标与待通知事项</span></span></button>
+            </div>
+
+            <footer class="page">这个工作台会随学习进度持续更新：学完一块、考完一场，就记到对应的分区里。</footer>
+          </section>
+
+          <!-- 2 AI 学习计划 -->
+          <section class="panel" id="panel-plan" aria-label="AI 学习计划">
+            <div class="p-head">
+              <div class="p-kicker">AI Plan · AI 学习计划</div>
+              <h1 class="p-title">AI × 车载芯片，长期方向</h1>
+              <p class="p-lede">计划分三条线并行：编程打底、原理吃透、应用练手。最后都往一个方向收——把 AI 能力用到半导体和车载芯片上，这也是我选材料物理这个专业想走的路。</p>
+            </div>
+
+            <h2 class="sec-title">三条学习主线</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="item">
+                <div class="row"><div class="t">① 编程基础</div><span class="tag doing">进行中</span></div>
+                <div class="d"><b>Python</b> 学习中；HTML / CSS / JavaScript 已能独立做轻量网页，熟悉 GitHub 项目管理和 GitHub Pages 部署。目标是先把“能把想法做出来”这件事练扎实。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">② 大模型原理</div><span class="tag doing">进行中</span></div>
+                <div class="d">重点理解注意力机制、Token、Softmax 与采样、上下文窗口这些底层概念。不满足于“会调参数”，想搞懂参数背后是什么、输出为什么可信或不可信。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">③ AI 应用与 Agent</div><span class="tag doing">学习中</span></div>
+                <div class="d">学习 AI 应用开发与 AI Agent 的基本思路：怎么拆任务、怎么给模型工具和约束、怎么验证结果。Prompt Engineering 在日常使用中持续练。</div>
+              </div>
+            </div>
+
+            <h2 class="sec-title">阶段安排</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="phase">
+                <div class="when"><div class="t">本学期 · 打基础</div><div class="d">2026 秋季学期</div></div>
+                <div class="body">课程学习优先，AI 保持轻量：<b>看懂大模型的基本原理</b>，把网页构建这条线练熟，开始系统学 Python。</div>
+              </div>
+              <div class="phase">
+                <div class="when"><div class="t">寒假 · 集中推进</div><div class="d">2027-01 起</div></div>
+                <div class="body">用整块时间集中学 <b>Python 与 AI 应用开发</b>，把原理小实验做成能演示、能讲解的小作品，并开始思考怎么和材料、芯片方向结合。</div>
+              </div>
+              <div class="phase">
+                <div class="when"><div class="t">长期 · 和专业结合</div><div class="d">持续</div></div>
+                <div class="body">把 AI 往 <b>半导体与车载芯片</b> 方向靠：专业课打底、AI 做杠杆。比如计算材料、器件结构、自动驾驶感知这些交叉点，都是我想慢慢探索的方向。</div>
+              </div>
+            </div>
+
+            <h2 class="sec-title">学到哪一步</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="item">
+                <div class="row"><div class="t">注意力机制可视化</div><span class="tag done">已动手验证</span></div>
+                <div class="d">用“小明把课本借给小红，她连声说谢谢”这类句子，点任意一个词看它的注意力分布——比如“她”主要指向“小红”。亲手拖过、看过分布，才算真的理解“模型在看哪里”。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">Temperature 与 Softmax 选词</div><span class="tag done">已动手验证</span></div>
+                <div class="d">拖动 Temperature，看候选词的概率分布怎么变尖或变平，再“采样一次”看模型怎么落子。理解了参数为什么会影响输出的稳定和发散。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">Token 切分与上下文</div><span class="tag doing">学习中</span></div>
+                <div class="d">理解一句话怎么被切成 Token、为什么长文本会受上下文窗口限制。这部分还在继续补。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">怎么和 AI 协作</div><span class="tag part">日常实践</span></div>
+                <div class="d">摸索出一套流程：先拆需求、分步骤推进、逐项核对、打开实测、记下教训。一条底线是 AI 说得再顺也不等于对，数字和结论都要回到来源查证。</div>
+              </div>
+            </div>
+
+            <div class="note" style="margin-top:14px">给自己定的标准：学一个概念，不以“看过”为准，以<b>能讲清楚、能动手演示、能指出它什么时候会出错</b>为准。</div>
+          </section>
+
+          <!-- 3 作业看板 -->
+          <section class="panel" id="panel-board" aria-label="作业看板">
+            <div class="p-head">
+              <div class="p-kicker">Board · 作业看板</div>
+              <h1 class="p-title">先把作业搞懂，再做自测卷</h1>
+              <p class="p-lede">期末复习的打法已经定下来：不急着刷卷子，先把之前的作业每一题和它背后的知识点都搞懂，作业里暴露的不会专题，决定后面复习往哪儿使劲。</p>
+            </div>
+
+            <h2 class="sec-title">当前任务</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="item">
+                <div class="row"><div class="t">线性代数 · 作业逐题重做</div><span class="tag doing">进行中</span></div>
+                <div class="d">老师发在 QQ 群里的作业，逐题自己重做一遍，把每道题对应的知识点理解透——这是线代复习的第一步，不跳过。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">复变函数与积分变换 · 作业逐题过</div><span class="tag doing">进行中</span></div>
+                <div class="d">和线代同样的打法：先过作业、记下不会的专题，后面的轮换复习按这些专题来排，而不是平均用力。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">线代 + 复变自测卷</div><span class="tag todo">待作业过完</span></div>
+                <div class="d">先不做。等两科作业和知识点都过完，再用自测卷检验——卷子是用来查漏的，不是用来代替理解的。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">计算材料学 · 开卷资料</div><span class="tag doing">准备中</span></div>
+                <div class="d">12 月 10 日开卷考查，用的是老师自己出的讲义，提前打印好、翻熟，考场上能快速定位。</div>
+              </div>
+            </div>
+
+            <h2 class="sec-title">复习推进</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="item">
+                <div class="row"><div class="t">顺序：先考先复习</div></div>
+                <div class="d">先推进 12 月中旬这一批——计算材料学、六级、复变、线代；考完之后再转到大学物理、物理化学、材料科学基础。重点科目（物化、材科）学分高、绩点权重大，时间分配上优先保障。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">六级备考</div><span class="tag doing">进行中</span></div>
+                <div class="d">做过一次听力诊断：25 题对 18 题。长对话和听力篇章正确率接近，但讲座部分（Section C）每题 14.2 分，是分值杠杆，重点练这一块；仔细阅读需要在安静条件下重做一篇，才能定真正的弱项。</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4 资料收藏 -->
+          <section class="panel" id="panel-library" aria-label="资料收藏">
+            <div class="p-head">
+              <div class="p-kicker">Library · 资料收藏</div>
+              <h1 class="p-title">常看的资料，都在这儿</h1>
+              <p class="p-lede">只收真正反复用得上的：专业课复习资料、AI 原理与工具、行业动态三类。</p>
+            </div>
+
+            <h2 class="sec-title">专业课资料</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="item">
+                <div class="row"><div class="t">计算材料学讲义（老师自编）</div><span class="tag done">已备打印版</span></div>
+                <div class="d">开卷考查就靠它：已经打印成纸质版，复习时在上面做标记，考场直接带进去查。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">期末复习范围</div><span class="tag part">已摸清</span></div>
+                <div class="d">各科范围基本是全书，期末成绩占比大多在 60%–70%。往年真题老师还没发，等发下来按优先级刷：材科、物化在前。</div>
+              </div>
+            </div>
+
+            <h2 class="sec-title">AI 原理与课程</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="item">
+                <div class="row"><div class="t">大模型原理：从 Token 到注意力</div><span class="tag doing">持续学习</span></div>
+                <div class="d">围绕 Token 切分、词向量、注意力机制、Softmax 与采样这条链学。每学一个概念，尽量找一个能动手拖、能改参数的小实验验证一遍。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">Python 学习资料</div><span class="tag doing">进行中</span></div>
+                <div class="d">以“能写出能跑的小东西”为目标选资料，不贪多。学完一节就动手写，不只看视频。</div>
+              </div>
+            </div>
+
+            <h2 class="sec-title">工具与文档</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="item">
+                <div class="row"><div class="t">四款 AI 工具的官方说明与更新</div><span class="tag part">日常对照</span></div>
+                <div class="d">Muse、ChatGPT、Grok、Gemini 都在用。关注它们的官方更新，同一个任务换不同工具做一遍，对比差别出在哪。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">GitHub 与 GitHub Pages</div><span class="tag done">已在用</span></div>
+                <div class="d">代码托管和页面发布的实际工作流：改一版、发一版、回头能查每一版改了什么。</div>
+              </div>
+            </div>
+
+            <h2 class="sec-title">行业动态</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="item">
+                <div class="row"><div class="t">每日关注：AI / 半导体 / 车载芯片 / 材料物理</div><span class="tag done">日常习惯</span></div>
+                <div class="d">每天花一点时间看这几个方向的要闻，重点不是记热点词，而是看技术往哪走、和自己的专业有没有接得上的地方。</div>
+              </div>
+            </div>
+
+            <div class="note" style="margin-top:14px">选资料的原则：<b>能验证的优先于讲得热闹的</b>。涉及数字、人名和结论的内容，尽量回到可靠来源核对，不直接转发二手说法。</div>
+          </section>
+
+          <!-- 5 学习时间 -->
+          <section class="panel" id="panel-timelog" aria-label="学习时间">
+            <div class="p-head">
+              <div class="p-kicker">Time Log · 学习时间</div>
+              <h1 class="p-title">这本账，记的是时间</h1>
+              <p class="p-lede">原来这一栏记的是日常记账；给老师展示，就换成学习时间账——每天学多久、花在哪几科，记清楚才知道时间花得值不值。</p>
+            </div>
+
+            <div class="grid3">
+              <div class="card stat"><div class="num">3<span style="font-size:16px"> h</span></div><div class="lab">工作日每天</div><div class="sub">白天约 1 小时 + 晚上 2 小时</div></div>
+              <div class="card stat"><div class="num">4<span style="font-size:16px"> h</span></div><div class="lab">周末每天</div><div class="sub">整块时间留给重点科目</div></div>
+              <div class="card stat"><div class="num">23<span style="font-size:16px"> h</span></div><div class="lab">每周合计</div><div class="sub">课表空闲时段休息，不硬塞</div></div>
+            </div>
+
+            <h2 class="sec-title">时间怎么分配</h2>
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="phase">
+                <div class="when"><div class="t">工作日</div><div class="d">周一至周五</div></div>
+                <div class="body">白天课间约 <b>1 小时</b>、晚上 <b>2 小时</b>，主要用来推进作业重做和按考试顺序复习；先考的科目排前面。</div>
+              </div>
+              <div class="phase">
+                <div class="when"><div class="t">周末</div><div class="d">周六、周日</div></div>
+                <div class="body">每天约 <b>4 小时</b>，整块时间留给 <b>材料科学基础、物理化学</b>这类重点科目，以及线代、复变的专题补漏。</div>
+              </div>
+              <div class="phase">
+                <div class="when"><div class="t">AI 学习</div><div class="d">考试季 · 轻量</div></div>
+                <div class="body">不占上面的复习时间：每天看一点行业动态、推进一点原理学习，保持手感就行；<b>假期再集中投入</b>。</div>
+              </div>
+            </div>
+
+            <div class="note" style="margin-top:14px">定这个标准的想法很简单：考试季时间就这么多，先保<b>学分高、权重大</b>的科目，再谈其他。休息时间明确留出来，反而更容易坚持。</div>
+          </section>
+
+          <!-- 6 重要备忘 -->
+          <section class="panel" id="panel-memo" aria-label="重要备忘">
+            <div class="p-head">
+              <div class="p-kicker">Memo · 重要备忘</div>
+              <h1 class="p-title">别忘的几件事</h1>
+              <p class="p-lede">都和学习有关：考试的、目标的、还没定时间的，集中记在这里，免得漏掉。</p>
+            </div>
+
+            <div class="card" style="padding-top:4px;padding-bottom:4px">
+              <div class="item">
+                <div class="row"><div class="t">六级目标：500 分以上</div><span class="tag doing">12-12 笔试</span></div>
+                <div class="d">四级 484 分裸考，听力是最弱的一项。这次备考重点补听力，尤其是分值最高的讲座部分；目标定在 500 分以上，越高越好。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">12 月 13 日一天两场</div><span class="tag key">注意状态</span></div>
+                <div class="d">上午复变考查、晚上线代考试，中间隔了大半天，提前一天把作息调好，别把精力全耗在上午。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">毛概开卷，时间未通知</div><span class="tag todo">等通知</span></div>
+                <div class="d">考核方式是开卷，考试时间地点教务还没公布，留意后续通知；开卷拼的是资料准备和定位速度。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">两门考查课时间未定</div><span class="tag todo">等通知</span></div>
+                <div class="d">化学实验室安全教育、大学物理实验 A2 都是考查，目前没有公布时间，先不安排专门复习。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">两门课没有考试</div><span class="tag done">不用复习</span></div>
+                <div class="d">形势与政策 III、习近平新时代中国特色社会主义思想与当代中国实践（寒假社会实践）没有考试，不列入复习安排。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">12 月 31 日的英语考试别搞混</div></div>
+                <div class="d">那是“大学英语六级”课程考试（晚 18:10–20:10，5302 教室），和 12 月 12 日的 CET-6 笔试不是同一场，这场不用专门复习。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">计算材料学：讲义别落下</div></div>
+                <div class="d">开卷考查，进考场前确认打印讲义带齐——这是这门课最实在的准备。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">寒假从 1 月 10 日左右开始</div><span class="tag todo">假期计划</span></div>
+                <div class="d">假期时间整块，计划集中学 Python 和 AI 应用开发，把这学期欠的动手量补上。</div>
+              </div>
+              <div class="item">
+                <div class="row"><div class="t">考研在考虑中</div></div>
+                <div class="d">目标院校和方向还没定。眼下的共识是先把这学期的成绩和绩点打好，方向的事等基础稳了再认真选。</div>
+              </div>
+            </div>
+
+            <footer class="page">本页内容截至 2026 年 11 月 22 日，后续随学习进度更新。</footer>
+          </section>
+
+        </div>
+      </main>
+    </div>
+
+    <nav class="tabbar" aria-label="工作台分区">
+      <button class="navbtn" data-target="overview" aria-selected="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>总览</button>
+      <button class="navbtn" data-target="plan" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>计划</button>
+      <button class="navbtn" data-target="board" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>作业</button>
+      <button class="navbtn" data-target="library" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4-7 4V4.5a1 1 0 0 1 1-1z"/></svg>资料</button>
+      <button class="navbtn" data-target="timelog" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>时间</button>
+      <button class="navbtn" data-target="memo" aria-selected="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 6.5 3 3.5H7l3-3.5z"/><path d="M12 14v6.5"/></svg>备忘</button>
+    </nav>
+      </div>
+    </div>
+
+    <script>
+(function(){
+var autoRotate=true, showBonds=true, viewers=[];
+function buildSi(){
+  var pts=[]; var base=[[0,0,0],[0,.5,.5],[.5,0,.5],[.5,.5,0]];
+  base.forEach(function(p){pts.push(p);pts.push([p[0]+.25,p[1]+.25,p[2]+.25])});
+  [[1,0,0],[0,1,0],[0,0,1],[1,1,0],[1,0,1],[0,1,1],[1,1,1]].forEach(function(p){pts.push(p)});
+  var atoms=pts.map(function(p){return {x:(p[0]-.5)*2,y:(p[1]-.5)*2,z:(p[2]-.5)*2,r:.21,c:'#64748b'}});
+  var bonds=[]; for(var i=0;i<atoms.length;i++)for(var j=i+1;j<atoms.length;j++){var a=atoms[i],b=atoms[j];var d=Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z); if(d>0.8&&d<0.95)bonds.push([i,j]);}
+  return {atoms:atoms,bonds:bonds};
+}
+function buildHex(c1,c2,r1,r2,layers,dz){
+  var atoms=[],bonds=[];
+  layers.forEach(function(z,li){
+    for(var i=-1;i<=1;i++)for(var j=-1;j<=1;j++){
+      var x=i*1.0+(j%2?0.45:0), y=j*0.88;
+      var idx=atoms.length; atoms.push({x:x,y:z,z:y,r:r1,c:c1});
+      var off=(li%2?0.34:-0.08);
+      atoms.push({x:x+off,y:z+dz,z:y+0.3,r:r2,c:c2}); bonds.push([idx,idx+1]);
+    }
+  });
+  return {atoms:atoms,bonds:bonds};
+}
+function makeViewer(elId,model){
+  var el=document.getElementById(elId); if(!el)return;
+  var cv=document.createElement('canvas'); el.insertBefore(cv,el.firstChild);
+  var ctx=cv.getContext('2d');
+  var v={el:el,cv:cv,ctx:ctx,model:model,rx:0.6,ry:0.6,scale:52,drag:false,px:0,py:0};
+  viewers.push(v);
+  function resize(){var w=el.clientWidth||320,h=280,d=Math.min(window.devicePixelRatio||1,2);cv.width=w*d;cv.height=h*d;cv.style.width=w+'px';cv.style.height=h+'px';ctx.setTransform(d,0,0,d,0,0);v.w=w;v.h=h;}
+  resize(); window.addEventListener('resize',resize);
+  el.addEventListener('pointerdown',function(e){v.drag=true;v.px=e.clientX;v.py=e.clientY;try{el.setPointerCapture(e.pointerId)}catch(_){}});
+  el.addEventListener('pointermove',function(e){if(!v.drag)return;v.ry+=(e.clientX-v.px)*0.012;v.rx+=(e.clientY-v.py)*0.012;v.px=e.clientX;v.py=e.clientY;});
+  el.addEventListener('pointerup',function(){v.drag=false});
+  el.addEventListener('wheel',function(e){e.preventDefault();v.scale*=e.deltaY<0?1.08:0.93;v.scale=Math.max(28,Math.min(110,v.scale))},{passive:false});
+}
+function draw(v){
+  var ctx=v.ctx,W=v.w||320,H=280; ctx.clearRect(0,0,W,H);
+  var cx=Math.cos(v.rx),sx=Math.sin(v.rx),cy=Math.cos(v.ry),sy=Math.sin(v.ry);
+  var P=v.model.atoms.map(function(a){
+    var y1=a.y*cx-a.z*sx, z1=a.y*sx+a.z*cx;
+    var x2=a.x*cy+z1*sy, z2=-a.x*sy+z1*cy;
+    return {x:W/2+x2*v.scale, y:H/2+y1*v.scale, z:z2, r:a.r*v.scale*0.62, c:a.c};
+  });
+  if(showBonds){ctx.strokeStyle='rgba(120,128,138,0.85)';ctx.lineWidth=5;ctx.lineCap='round';
+    v.model.bonds.forEach(function(b){var a=P[b[0]],c=P[b[1]];ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(c.x,c.y);ctx.stroke();});}
+  var order=P.map(function(p,i){return i}).sort(function(i,j){return P[i].z-P[j].z});
+  order.forEach(function(i){var p=P[i];
+    var g=ctx.createRadialGradient(p.x-p.r*0.35,p.y-p.r*0.35,p.r*0.15,p.x,p.y,p.r);
+    g.addColorStop(0,'#ffffff'); g.addColorStop(0.25,p.c); g.addColorStop(1,p.c);
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.18)'; ctx.lineWidth=1; ctx.stroke();
+  });
+}
+(function loop(){ viewers.forEach(function(v){ if(autoRotate&&!v.drag)v.ry+=0.008; draw(v); }); requestAnimationFrame(loop); })();
+makeViewer('cv-si',buildSi());
+makeViewer('cv-sic',buildHex('#0891b2','#23272e',0.20,0.13,[-1.05,-0.35,0.35,1.05],0.4));
+makeViewer('cv-gan',buildHex('#d97706','#2563eb',0.21,0.12,[-0.8,0,0.8],0.4));
+var bR=document.getElementById('btnRotate'),bB=document.getElementById('btnBond'),bReset=document.getElementById('btnReset');
+bR.addEventListener('click',function(){autoRotate=!autoRotate;bR.textContent=autoRotate?'\u23F8 \u6682\u505C\u81EA\u52A8\u65CB\u8F6C':'\u25B6 \u5F00\u59CB\u81EA\u52A8\u65CB\u8F6C';bR.classList.toggle('active',autoRotate)});
+bB.addEventListener('click',function(){showBonds=!showBonds;bB.textContent='\u663E\u793A\u5316\u5B66\u952E\uFF1A'+(showBonds?'\u5F00':'\u5173');bB.classList.toggle('active',showBonds)});
+bReset.addEventListener('click',function(){viewers.forEach(function(v){v.rx=0.6;v.ry=0.6;v.scale=52})});
+function renderBars(){
+  var html='<p style="font-weight:700;margin:6px 0 0">\u51FB\u7A7F\u7535\u573A E<sub>c</sub>\uFF08MV/cm\uFF09</p>';
+  [['Si',0.3,'#64748b'],['4H-SiC',2.8,'#0891b2'],['GaN',3.3,'#d97706']].forEach(function(r){html+='<div class="bar-row"><span>'+r[0]+'</span><div class="track"><div class="fill" style="width:'+(r[1]/3.3*100)+'%;background:'+r[2]+'"></div></div><span>'+r[1]+' MV/cm</span></div>'});
+  document.getElementById('chartEc').innerHTML=html;
+  var h2='<p style="font-weight:700;margin:14px 0 0">\u70ED\u5BFC\u7387 \u03BA\uFF08W/(m\u00B7K)\uFF09</p>';
+  [['Si',150,'#64748b'],['4H-SiC',370,'#0891b2'],['GaN',130,'#d97706']].forEach(function(r){h2+='<div class="bar-row"><span>'+r[0]+'</span><div class="track"><div class="fill" style="width:'+(r[1]/370*100)+'%;background:'+r[2]+'"></div></div><span>'+r[1]+'</span></div>'});
+  document.getElementById('chartK').innerHTML=h2;
+}
+renderBars();
+var volt=document.getElementById('volt');
+function renderDrift(){
+  var V=+volt.value; document.getElementById('voltVal').textContent=V+' V';
+  var data=[['Si',0.3,'#64748b'],['4H-SiC',2.8,'#0891b2'],['GaN',3.3,'#d97706']];
+  var widths=data.map(function(d){return 2*V/(d[1]*1e6)*1e4});
+  var max=Math.max.apply(null,widths); var html='';
+  data.forEach(function(d,i){html+='<div class="bar-row"><span>'+d[0]+'</span><div class="track"><div class="fill" style="width:'+Math.max(2,widths[i]/max*100)+'%;background:'+d[2]+'"></div></div><span>'+widths[i].toFixed(1)+' \u03BCm</span></div>'});
+  document.getElementById('driftChart').innerHTML=html;
+  document.getElementById('driftNote').textContent='\u5728 '+V+' V \u4E0B\uFF0CSi \u9700\u8981\u7EA6 '+widths[0].toFixed(0)+' \u03BCm \u7684\u6F02\u79FB\u533A\uFF0CSiC \u53EA\u9700\u7EA6 '+widths[1].toFixed(1)+' \u03BCm\u2014\u2014\u8584\u7EA6 '+(widths[0]/widths[1]).toFixed(1)+' \u500D\u3002\u6B64\u4E3A\u4E00\u7EF4\u7B80\u5316\u4F30\u7B97\uFF0C\u771F\u5B9E\u5668\u4EF6\u8FD8\u542B\u7EC8\u7AEF\u3001\u63BA\u6742\u5206\u5E03\u4E0E\u5B89\u5168\u88D5\u91CF\u3002';
+}
+volt.addEventListener('input',renderDrift); renderDrift();
+})();
+    </script>
+    <script>
+    (function(){
+      "use strict";
+      var world = document.getElementById('worldCanvas');
+      var chip = document.getElementById('chipCanvas');
+      var wctx = world.getContext('2d');
+      var cctx = chip.getContext('2d');
+      var W = 800, H = 500;
+
+      /* ------- road geometry ------- */
+      var LANE_Y = [150, 250, 350];       // lane centres
+      var LANE_H = 100;
+      var ROAD_TOP = 100, ROAD_BOT = 400;
+      var PX_PER_M = 11;                  // scale
+
+      /* ------- scenarios ------- */
+      var SCEN = {
+        day:  { label:'晴天路口', envTag:'晴天 · 干燥路面', friction:5.5, confF:1.0,  detPx:1120, night:false, rain:false,
+                desc:'基准场景：光线充足、路面干燥，检测距离拉满，附着系数 a = 5.5 m/s²。先在这里把 AEB 的完整流程看一遍。' },
+        night:{ label:'夜间行人', envTag:'夜间 · 摄像头受限', friction:5.0, confF:0.8, detPx:430, night:true, rain:false,
+                desc:'难点：天黑后摄像头看不远，芯片的检测距离从一百多米缩到约 30 米，置信度也往下掉——但毫米波雷达不受光线影响，测距照常。速度别开太快：72 km/h 时刹停需要 40 多米，等看见行人可能已经来不及。' },
+        rain: { label:'雨天湿滑', envTag:'雨天 · 路面湿滑', friction:3.4, confF:0.9, detPx:700, night:false, rain:true,
+                desc:'难点：雨水让轮胎抓不住地，附着系数从 5.5 掉到 3.4 m/s²，同样的速度刹车距离直接变长六成多。盯着右侧「需要 vs 现有」两条 bar：AEB 会被迫提前很多触发。' },
+        follow:{ label:'前车急刹', envTag:'跟车 · 前车随机急刹', friction:5.5, confF:1.0, detPx:1120, night:false, rain:false,
+                 desc:'难点：前车会毫无征兆地急刹。芯片算的 TTC 用的是相对速度——两车同速时 TTC 很大，前车一刹，TTC 瞬间塌下去。你可以等 AEB，也可以提前变道躲开。' },
+        dart: { label:'鬼探头', envTag:'遮挡 · 行人突然冲出', friction:5.5, confF:1.0, detPx:1120, night:false, rain:false,
+                desc:'难点：行人躲在路边停放车辆后面，芯片根本看不见他（遮挡 = 无检测）。等他冲出来，留给刹车的距离只剩十几米。这是城市道路最难处理的一类事故场景。' },
+        construction:{ label:'施工路段', envTag:'施工 · 锥桶阵', friction:5.5, confF:1.0, detPx:1120, night:false, rain:false,
+                 desc:'难点：前方三条车道轮流被锥桶和货物堵住，没有一条道能直着开过去。用 A/D 变道穿过去，或者刹停——别硬撞，撞上就重置了。' }
+      };
+
+      /* ------- state ------- */
+      var S = null;
+      var TASKS = { t1:false, t2:false, t3:false };   // survives resets
+      function freshState(){
+        return {
+          running:false,
+          camX:0,
+          speedMS:0,
+          targetKmh:36,
+          lane:1,
+          carY:LANE_Y[1],
+          peds:[],
+          obstacles:[],
+          crosswalks:[900, 2400, 3900],
+          aeb:true,
+          showBoxes:true,
+          aebActive:false,
+          crashed:false,
+          simTime:0,
+          pedTimer:260,
+          safeMsgTimer:0,
+          scenario:'day',
+          lead:null,
+          parked:[],
+          nearThreat:false
+        };
+      }
+      S = freshState();
+
+      var CAR_X = 210;
+      var CAR_W = 96, CAR_H = 52;
+
+      /* ------- DOM ------- */
+      var hudSpeed = document.getElementById('hudSpeed');
+      var hudDist = document.getElementById('hudDist');
+      var hudTtc = document.getElementById('hudTtc');
+      var hudDistWrap = document.getElementById('hudDistWrap');
+      var hudTtcWrap = document.getElementById('hudTtcWrap');
+      var hudState = document.getElementById('hudState');
+      var alertBox = document.getElementById('alertBox');
+      var logEl = document.getElementById('log');
+      var fpsTag = document.getElementById('fpsTag');
+      var envTag = document.getElementById('envTag');
+      var btnGo = document.getElementById('btnGo');
+      var scenDesc = document.getElementById('scenDesc');
+      var ps = [null,
+        document.getElementById('ps1'), document.getElementById('ps2'),
+        document.getElementById('ps3'), document.getElementById('ps4')];
+      var pl = [null,
+        document.getElementById('pl1'), document.getElementById('pl2'),
+        document.getElementById('pl3'), document.getElementById('pl4')];
+      var brakeCalc = document.getElementById('brakeCalc');
+      var barNeed = document.getElementById('barNeed');
+      var barHave = document.getElementById('barHave');
+      var needVal = document.getElementById('needVal');
+      var haveVal = document.getElementById('haveVal');
+
+      function env(){ return SCEN[S.scenario]; }
+      function fmtTime(){
+        var t = S.simTime;
+        var m = Math.floor(t/60), s = Math.floor(t%60);
+        return (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+      }
+      function logEvent(text, cls){
+        var li = document.createElement('li');
+        var span = document.createElement('span');
+        span.className = 't'; span.textContent = fmtTime();
+        var body = document.createElement('span');
+        if(cls) body.className = cls;
+        body.textContent = text;
+        li.appendChild(span); li.appendChild(body);
+        logEl.insertBefore(li, logEl.firstChild);
+        while(logEl.children.length > 30) logEl.removeChild(logEl.lastChild);
+      }
+      function markTask(id){
+        if(TASKS[id]) return;
+        TASKS[id] = true;
+        var el = document.getElementById('task' + id.slice(1));
+        if(el) el.className = 'done';
+      }
+
+      /* ------- spawning ------- */
+      var pedSeq = 0, obsSeq = 0;
+      function spawnPed(atWorldX){
+        var wx = atWorldX;
+        if(wx == null){
+          for(var i=0;i<S.crosswalks.length;i++){
+            var sx = S.crosswalks[i] - S.camX;
+            if(sx > 480){ wx = S.crosswalks[i]; break; }
+          }
+          if(wx == null) wx = S.camX + W + 500;
+        }
+        var fromTop = (pedSeq++ % 2 === 0);
+        S.peds.push({
+          worldX: wx + 26,
+          y: fromTop ? ROAD_TOP - 46 : ROAD_BOT + 46,
+          vy: (fromTop ? 1 : -1) * (0.62 + Math.random()*0.15),
+          conf: 0.9 + Math.random()*0.09,
+          id: pedSeq,
+          state:'waiting',
+          hidden:false,
+          seen:false, warned:false
+        });
+        logEvent('行人 #' + pedSeq + ' 出现在斑马线，开始横穿马路');
+      }
+      var obsKinds = [
+        {kind:'cone', label:'交通锥', w:26, h:34},
+        {kind:'car', label:'故障车辆', w:96, h:52},
+        {kind:'box', label:'掉落货物', w:44, h:40}
+      ];
+      function addObstacle(worldX, lane, k){
+        S.obstacles.push({
+          worldX: worldX, lane: lane, kind:k.kind, label:k.label, w:k.w, h:k.h,
+          conf: 0.88 + Math.random()*0.11, id: ++obsSeq, seen:false, warned:false
+        });
+      }
+      function spawnObstacle(){
+        var lane = Math.floor(Math.random()*3);
+        var k = obsKinds[Math.floor(Math.random()*obsKinds.length)];
+        addObstacle(S.camX + W + 420 + Math.random()*300, lane, k);
+        logEvent('前方车道出现' + k.label);
+      }
+
+      function setupScenario(){
+        var sc = S.scenario;
+        if(sc === 'day'){
+          addObstacle(1500, 2, obsKinds[0]);
+        } else if(sc === 'follow'){
+          S.lead = {
+            worldX: S.camX + 700, lane: 1, speedMS: S.targetKmh/3.6 * 0.92,
+            phase:'cruise', phaseT: 3.2, conf: 0.97, id:'L1', seen:false, warned:false, braking:false
+          };
+          logEvent('前车出现在本车道前方，保持跟车——它随时可能急刹', 'ev-warn');
+        } else if(sc === 'dart'){
+          S.parked = [{worldX:1060}, {worldX:1400}];
+          pedSeq++;
+          S.peds.push({
+            worldX: 1246, y: ROAD_TOP - 42,
+            vy: 1.55, conf: 0.86, id: pedSeq,
+            state:'waiting', hidden:true, seen:false, warned:false
+          });
+          logEvent('路边停着两辆车，车后什么都看不见——保持警惕', 'ev-warn');
+        } else if(sc === 'construction'){
+          addObstacle(1200, 0, obsKinds[0]);
+          addObstacle(1560, 0, obsKinds[0]);
+          addObstacle(1920, 1, obsKinds[2]);
+          addObstacle(2280, 2, obsKinds[0]);
+          addObstacle(2640, 2, obsKinds[0]);
+          addObstacle(3050, 1, obsKinds[0]);
+          logEvent('前方施工，锥桶轮流封住三条车道，需要变道穿行', 'ev-warn');
+        }
+      }
+
+      /* ------- perception ------- */
+      function perceive(){
+        var e = env();
+        var dets = [];
+        var i, sx, gapPx;
+        for(i=0;i<S.peds.length;i++){
+          var p = S.peds[i];
+          sx = p.worldX - S.camX;
+          gapPx = p.worldX - (S.camX + CAR_X + CAR_W/2);
+          if(p.hidden && gapPx > 330) continue;               // occluded: chip cannot see
+          if(sx > CAR_X - 130 && sx < CAR_X + e.detPx){
+            var inRoad = p.y > ROAD_TOP - 30 && p.y < ROAD_BOT + 30;
+            dets.push({
+              type:'ped', obj:p, sx:sx, sy:p.y, w:34, h:52, tag:'#' + p.id,
+              label:'行人', conf: Math.min(0.99, Math.max(0.35, p.conf * e.confF)),
+              distM: Math.max(0,(p.worldX - (S.camX + CAR_X + CAR_W/2)) / PX_PER_M),
+              closing: S.speedMS,
+              inPath: inRoad
+            });
+          }
+        }
+        for(i=0;i<S.obstacles.length;i++){
+          var o = S.obstacles[i];
+          sx = o.worldX - S.camX;
+          if(sx > CAR_X - 130 && sx < CAR_X + e.detPx){
+            dets.push({
+              type:'obs', obj:o, sx:sx, sy:LANE_Y[o.lane], w:o.w, h:o.h, tag:'#' + o.id,
+              label:o.label, conf: Math.min(0.99, Math.max(0.35, o.conf * e.confF)),
+              distM: Math.max(0,(o.worldX - (S.camX + CAR_X + CAR_W/2)) / PX_PER_M),
+              closing: S.speedMS,
+              inPath: o.lane === S.lane
+            });
+          }
+        }
+        if(S.lead){
+          var L = S.lead;
+          sx = L.worldX - S.camX;
+          if(sx > CAR_X - 160 && sx < CAR_X + e.detPx){
+            dets.push({
+              type:'lead', obj:L, sx:sx, sy:LANE_Y[L.lane], w:96, h:52, tag:'#L1',
+              label:'前车', conf: L.conf,
+              distM: Math.max(0,(L.worldX - (S.camX + CAR_X + CAR_W/2)) / PX_PER_M),
+              closing: S.speedMS - L.speedMS,
+              inPath: L.lane === S.lane
+            });
+          }
+        }
+        for(i=0;i<S.parked.length;i++){
+          var pk = S.parked[i];
+          sx = pk.worldX - S.camX;
+          if(sx > CAR_X - 130 && sx < CAR_X + e.detPx){
+            dets.push({
+              type:'parked', obj:pk, sx:sx, sy:ROAD_TOP - 32, w:96, h:46, tag:'',
+              label:'停放车辆', conf:0.95,
+              distM: Math.max(0,(pk.worldX - (S.camX + CAR_X + CAR_W/2)) / PX_PER_M),
+              closing: S.speedMS, inPath:false
+            });
+          }
+        }
+        return dets;
+      }
+
+      function nearestThreat(dets){
+        var best = null;
+        for(var i=0;i<dets.length;i++){
+          var d = dets[i];
+          if(!d.inPath) continue;
+          if(d.sx < CAR_X - 10) continue;
+          if(!best || d.distM < best.distM) best = d;
+        }
+        return best;
+      }
+
+      /* ------- physics / logic ------- */
+      var manualBrake = 0;
+
+      function step(dt){
+        S.simTime += dt;
+        var e = env();
+        var targetMS = S.targetKmh / 3.6;
+
+        // lead car behaviour
+        if(S.lead){
+          var L = S.lead;
+          L.phaseT -= dt;
+          if(L.phase === 'cruise' && L.phaseT <= 0){ L.phase = 'brake'; L.phaseT = 1.15; L.braking = true; logEvent('前车突然急刹！', 'ev-warn'); }
+          else if(L.phase === 'brake' && L.phaseT <= 0){ L.phase = 'wait'; L.phaseT = 2.2; L.braking = false; }
+          else if(L.phase === 'wait' && L.phaseT <= 0){ L.phase = 'go'; L.phaseT = 1.6; }
+          else if(L.phase === 'go' && L.phaseT <= 0){ L.phase = 'cruise'; L.phaseT = 3.5 + Math.random()*2.5; }
+          var lt = (L.phase === 'brake' || L.phase === 'wait') ? 0 : targetMS * 0.92;
+          var la = L.phase === 'brake' ? -5.5 : (L.speedMS < lt ? 2.2 : -3);
+          L.speedMS = Math.max(0, L.speedMS + la * dt);
+          L.worldX += L.speedMS * PX_PER_M * dt;
+          if(L.worldX - S.camX < -280) S.lead = null;
+        }
+
+        var dets = perceive();
+        var threat = nearestThreat(dets);
+
+        // braking distance: reaction (0.3 s system delay) + v^2 / 2a
+        var brakeDistM = 0;
+        if(S.speedMS > 0.3){
+          brakeDistM = S.speedMS * 0.3 + (S.speedMS * S.speedMS) / (2 * e.friction);
+        }
+        var ttc = Infinity;
+        if(threat && threat.closing > 0.3) ttc = threat.distM / threat.closing;
+
+        // AEB decision
+        var wantAeb = false;
+        if(threat && S.speedMS > 0.5){
+          if(threat.type === 'ped' && threat.distM < brakeDistM + 9) wantAeb = true;
+          if(threat.type === 'obs' && threat.distM < brakeDistM + 4) wantAeb = true;
+          if(threat.type === 'lead' && (threat.distM < brakeDistM + 9 || ttc < 1.5)) wantAeb = true;
+        }
+        if(wantAeb && S.aeb && !S.aebActive){
+          S.aebActive = true;
+          logEvent('AEB 触发！' + threat.label + ' 距离 ' + threat.distM.toFixed(1) + ' m，自动紧急制动', 'ev-brake');
+        }
+        if(S.aebActive && S.aeb && (!threat || threat.distM > 26)){
+          S.aebActive = false;
+          logEvent('前方已清空，AEB 解除', 'ev-ok');
+          S.safeMsgTimer = 160;
+        }
+        if(!S.aeb) S.aebActive = false;
+
+        // AEB full stop in front of a pedestrian -> tasks
+        if(S.aebActive && S.speedMS < 0.15 && threat && threat.type === 'ped'){
+          markTask('t1');
+          if(S.scenario === 'rain') markTask('t3');
+        }
+        if(S.scenario === 'rain' && S.aebActive && S.speedMS < 0.15 && threat) markTask('t3');
+
+        // manual-save task tracking (AEB off, threat got close, driver stopped in time)
+        if(!S.aeb && threat && threat.distM < 22 && S.speedMS > 1) S.nearThreat = true;
+        if(S.nearThreat && S.speedMS < 0.15 && !S.crashed){
+          markTask('t2');
+          S.nearThreat = false;
+          logEvent('靠你自己刹停了——这就是 AEB 每天在替驾驶员做的事', 'ev-ok');
+        }
+
+        // warnings & first-seen logs
+        if(threat && !threat.obj.warned && ttc !== Infinity && ttc < 2.6){
+          threat.obj.warned = true;
+          if(!S.aeb){
+            logEvent('⚠ 碰撞预警：' + threat.label + ' TTC ' + ttc.toFixed(1) + ' s——AEB 已关闭，不会自动刹车！', 'ev-warn');
+          } else if(!S.aebActive){
+            logEvent('前方 ' + threat.label + ' 进入预警区，TTC ' + ttc.toFixed(1) + ' s', 'ev-warn');
+          }
+        }
+        if(threat && !threat.obj.seen){
+          threat.obj.seen = true;
+          if(threat.obj.hidden){
+            logEvent('行人从停放车辆后冲出！遮挡让他被检出时只剩 ' + threat.distM.toFixed(1) + ' m', 'ev-warn');
+          } else {
+            logEvent('芯片检出：' + threat.label + '，距离 ' + threat.distM.toFixed(1) + ' m，置信度 ' + Math.round(threat.conf*100) + '%');
+          }
+        }
+
+        // speed update
+        var accel = 0;
+        if(S.aebActive && S.aeb){
+          accel = S.speedMS > 0.15 ? -10.5 : 0;
+        } else if(manualBrake > 0){
+          accel = -7; manualBrake--;
+        } else if(S.running && !S.crashed){
+          if(S.speedMS < targetMS) accel = Math.min(2.6, (targetMS - S.speedMS) * 0.9);
+          else accel = Math.max(-2.2, (targetMS - S.speedMS) * 0.9);
+        } else {
+          accel = S.speedMS > 0 ? -3.2 : 0;
+        }
+        S.speedMS = Math.max(0, S.speedMS + accel * dt);
+        if(!S.running && !S.aebActive && manualBrake<=0 && S.speedMS < 0.08) S.speedMS = 0;
+
+        var dx = S.speedMS * PX_PER_M * dt;
+        S.camX += dx;
+
+        // smooth lane change
+        var targetY = LANE_Y[S.lane];
+        S.carY += (targetY - S.carY) * Math.min(1, dt*5);
+
+        // pedestrians
+        for(var i=S.peds.length-1;i>=0;i--){
+          var p = S.peds[i];
+          if(p.state === 'waiting'){
+            var gapPx = p.worldX - (S.camX + CAR_X + CAR_W/2);
+            var startGap = p.hidden ? 430 : 680;
+            if(gapPx < startGap){
+              p.state = 'crossing';
+              if(p.hidden) logEvent('车后有人冲出来了！', 'ev-warn');
+            } else continue;
+          }
+          p.y += p.vy * 96 * dt;
+          if(p.y < ROAD_TOP - 60 || p.y > ROAD_BOT + 60){
+            S.peds.splice(i,1);
+            logEvent('行人已通过马路', 'ev-ok');
+          }
+        }
+        for(var j=S.obstacles.length-1;j>=0;j--){
+          if(S.obstacles[j].worldX - S.camX < -200) S.obstacles.splice(j,1);
+        }
+        for(var q=S.parked.length-1;q>=0;q--){
+          if(S.parked[q].worldX - S.camX < -240) S.parked.splice(q,1);
+        }
+
+        // auto-spawn pedestrians periodically (not in dart/follow scenes)
+        if(S.running && !S.crashed && S.scenario !== 'dart' && S.scenario !== 'follow'){
+          S.pedTimer--;
+          if(S.pedTimer <= 0){
+            spawnPed(null);
+            S.pedTimer = 480 + Math.floor(Math.random()*380);
+          }
+        }
+
+        // collision check
+        if(!S.crashed && S.speedMS > 1){
+          for(var k=0;k<dets.length;k++){
+            var d = dets[k];
+            if(d.type==='ped' && Math.abs(d.sy - S.carY) < 62 && d.sx > CAR_X - 6 && d.sx < CAR_X + CAR_W - 8){
+              S.crashed = true; S.running = false; S.speedMS = 0;
+              logEvent('💥 撞到行人！感知早就看到了，但没有制动介入——已重置场景', 'ev-brake');
+              showAlert('brake', '💥 发生碰撞！点「重置」再试一次——这次把 AEB 打开，或者把速度降下来。');
+              setTimeout(function(){ resetSim(); }, 2600);
+              break;
+            }
+            if((d.type==='obs' || d.type==='lead') && d.inPath && d.sx > CAR_X + 6 && d.sx < CAR_X + CAR_W - 4){
+              S.crashed = true; S.running = false; S.speedMS = 0;
+              logEvent('💥 撞上' + d.label + '！变道或刹车必须二选一——已重置场景', 'ev-brake');
+              showAlert('brake', '💥 撞上' + d.label + '！下次提前变道（A/D 键）或者刹车。点「重置」再试。');
+              setTimeout(function(){ resetSim(); }, 2600);
+              break;
+            }
+          }
+        }
+        if(S.safeMsgTimer > 0) S.safeMsgTimer--;
+
+        updateHud(dets, threat, ttc, brakeDistM);
+        return {dets:dets, threat:threat, ttc:ttc};
+      }
+
+      /* ------- HUD & alert ------- */
+      var alertTimer = null;
+      function showAlert(kind, text){
+        alertBox.className = 'alert show ' + kind;
+        alertBox.textContent = text;
+        if(alertTimer) clearTimeout(alertTimer);
+        if(kind !== 'brake'){
+          alertTimer = setTimeout(function(){ alertBox.className='alert'; }, 4200);
+        }
+      }
+      function hideAlert(){ alertBox.className = 'alert'; }
+
+      function updateHud(dets, threat, ttc, brakeDistM){
+        var e = env();
+        hudSpeed.textContent = Math.round(S.speedMS * 3.6);
+        if(threat){
+          hudDist.textContent = threat.distM.toFixed(1);
+          hudDistWrap.className = 'v' + (threat.distM < 12 ? ' danger' : '');
+          if(ttc !== Infinity && threat.closing > 0.3){
+            hudTtc.textContent = ttc.toFixed(1);
+            hudTtcWrap.className = 'v' + (ttc < 1.2 ? ' danger' : '');
+          } else { hudTtc.textContent = '—'; hudTtcWrap.className = 'v'; }
+        } else {
+          hudDist.textContent = '—'; hudDistWrap.className = 'v';
+          hudTtc.textContent = '—'; hudTtcWrap.className = 'v';
+        }
+        var st, cls = '';
+        if(S.crashed){ st = '已碰撞'; cls='danger'; }
+        else if(S.aebActive && S.aeb && S.speedMS >= 0.15){ st = 'AEB 制动中'; cls='danger'; }
+        else if(S.aebActive && S.aeb){ st = 'AEB 保持刹停'; cls='danger'; }
+        else if(S.speedMS < 0.1){ st = '已停车'; }
+        else if(threat && ttc < 2.6){ st = '碰撞预警'; cls='danger'; }
+        else if(S.running){ st = '巡航中'; cls='ok'; }
+        else { st = '减速中'; }
+        hudState.textContent = st;
+        hudState.className = 'v ' + cls;
+        hudState.style.fontSize = '19px'; hudState.style.paddingTop = '4px';
+
+        if(S.aebActive && S.aeb && S.speedMS >= 0.15){
+          alertBox.className = 'alert show brake';
+          alertBox.textContent = '🛑 AEB 自动紧急制动中——前方有' + (threat ? threat.label : '目标') + '，芯片已接管刹车，不需要你踩。';
+        } else if(S.aebActive && S.aeb){
+          alertBox.className = 'alert show safe';
+          alertBox.textContent = '✅ AEB 已把车刹停，正在等前方清空——清空后会自动解除。';
+        } else if(threat && ttc < 2.6 && !S.aeb && S.speedMS > 0.5){
+          alertBox.className = 'alert show warn';
+          alertBox.textContent = '⚠ 前方 ' + threat.distM.toFixed(1) + ' m 有' + threat.label + '，TTC ' + ttc.toFixed(1) + ' s！AEB 已关闭，只能靠你自己刹车（空格键）！';
+        } else if(S.safeMsgTimer > 0){
+          alertBox.className = 'alert show safe';
+          alertBox.textContent = '✅ 前方已清空，AEB 解除，车辆继续行驶。';
+        } else if(!S.crashed){
+          hideAlert();
+        }
+
+        /* ----- live pipeline readout ----- */
+        ps[1].textContent = e.night ? '实时：光线不足，摄像头置信度下降；毫米波雷达不受光线影响，照常测距'
+                          : e.rain ? '实时：雨幕干扰摄像头，轮胎附着下降；雷达测距为主'
+                          : '实时：摄像头 30 FPS 采样 · 毫米波雷达同步测距测速';
+        ps[2].textContent = '实时：当前检出 ' + dets.length + ' 个目标' + (threat ? '，最近威胁 ' + threat.distM.toFixed(1) + ' m' : '');
+        ps[3].textContent = threat
+          ? '实时：' + threat.label + ' ' + (threat.tag || '') + ' 在本车路径内，TTC ' + (ttc === Infinity ? '∞（同速）' : ttc.toFixed(1) + ' s')
+          : '实时：本车路径内暂无威胁';
+        ps[4].textContent = (S.aebActive && S.aeb)
+          ? (S.speedMS >= 0.15 ? '实时：AEB 制动中，制动压力拉满' : '实时：AEB 保持刹停，等待前方清空')
+          : (!S.aeb ? '实时：AEB 已关闭，制动只能靠驾驶员'
+          : (threat && ttc < 2.6 ? '实时：预警已发出，等驾驶员反应；再晚就接管' : '实时：AEB 待命，持续比对距离与刹车距离'));
+        var activeStep = 1;
+        if(S.aebActive && S.aeb) activeStep = 4;
+        else if(threat && ttc < 3.2) activeStep = 3;
+        else if(dets.length > 0) activeStep = 2;
+        for(var sIdx=1;sIdx<=4;sIdx++){
+          pl[sIdx].className = (sIdx === activeStep) ? 'active' : '';
+        }
+        pl[4].className = (pl[4].className + ((S.aebActive && S.aeb) ? ' hot' : '')).trim();
+
+        /* ----- brake distance calc ----- */
+        if(S.speedMS > 0.5){
+          var kmh = (S.speedMS * 3.6).toFixed(0);
+          var react = S.speedMS * 0.3;
+          var slide = (S.speedMS * S.speedMS) / (2 * e.friction);
+          var verdict;
+          if(!threat) verdict = '前方路径内暂无目标。';
+          else if(threat.distM >= brakeDistM) verdict = '最近目标还有 ' + threat.distM.toFixed(1) + ' m，<span class="good">够刹停</span>。';
+          else verdict = '最近目标只剩 ' + threat.distM.toFixed(1) + ' m，<span class="bad">已经不够刹停了！</span>';
+          brakeCalc.innerHTML = '车速 <strong>' + kmh + ' km/h</strong>（' + S.speedMS.toFixed(1) + ' m/s）：反应距离 ' +
+            react.toFixed(1) + ' m + 制动距离 ' + slide.toFixed(1) + ' m（附着 a = ' + e.friction.toFixed(1) + ' m/s²）= 需要 <strong>' +
+            brakeDistM.toFixed(1) + ' m</strong>。' + verdict;
+          var have = threat ? threat.distM : 80;
+          var scale = Math.max(brakeDistM, have, 30);
+          barNeed.style.width = Math.min(100, brakeDistM / scale * 100) + '%';
+          barHave.style.width = Math.min(100, have / scale * 100) + '%';
+          needVal.textContent = brakeDistM.toFixed(1) + ' m';
+          haveVal.textContent = threat ? threat.distM.toFixed(1) + ' m' : '80+ m';
+        } else {
+          brakeCalc.textContent = '车辆静止。起步后，这里会实时算出：以现在的速度刹车，要滑出多远才停得住。';
+          barNeed.style.width = '0%'; barHave.style.width = '0%';
+          needVal.textContent = '0 m'; haveVal.textContent = '—';
+        }
+      }
+
+      /* ------- drawing: world ------- */
+      function drawRoad(ctx, chipMode){
+        var e = env();
+        if(chipMode){
+          ctx.fillStyle = '#05080a'; ctx.fillRect(0,0,W,H);
+        } else {
+          // sky + building silhouettes (parallax 0.45x) + sidewalk
+          var sky = ctx.createLinearGradient(0,0,0,ROAD_TOP);
+          if(e.night){ sky.addColorStop(0,'#131c33'); sky.addColorStop(1,'#232f4a'); }
+          else if(e.rain){ sky.addColorStop(0,'#8fa5b5'); sky.addColorStop(1,'#b3c3cd'); }
+          else { sky.addColorStop(0,'#a8cdf0'); sky.addColorStop(1,'#dceefb'); }
+          ctx.fillStyle = sky; ctx.fillRect(0,0,W,ROAD_TOP);
+          var boff = -((S.camX * 0.45) % 210);
+          for(var bx = boff - 210; bx < W + 60; bx += 210){
+            var bh = 52 + ((Math.floor((bx + S.camX * 0.45) / 210) * 37) % 30);
+            ctx.fillStyle = e.night ? '#1c2942' : (e.rain ? '#7e93a3' : '#8fa9c4');
+            ctx.fillRect(bx + 18, ROAD_TOP - 14 - bh, 120, bh);
+            ctx.fillStyle = e.night ? 'rgba(255,214,120,.85)' : 'rgba(255,255,255,.35)';
+            for(var wy = ROAD_TOP - 14 - bh + 8; wy < ROAD_TOP - 24; wy += 14){
+              for(var wx2 = bx + 28; wx2 < bx + 126; wx2 += 22){
+                if(((wx2 + wy) / 7) % 3 !== 0) ctx.fillRect(wx2, wy, 9, 7);
+              }
+            }
+          }
+          // bottom band: grass + trees
+          ctx.fillStyle = e.night ? '#1d3320' : (e.rain ? '#5d8260' : '#7fae6d');
+          ctx.fillRect(0, ROAD_BOT, W, H - ROAD_BOT);
+          ctx.fillStyle = e.night ? '#27333c' : '#9aa0a3';
+          ctx.fillRect(0, ROAD_TOP - 14, W, 14);
+          ctx.fillRect(0, ROAD_BOT, W, 14);
+        }
+        // road surface
+        ctx.fillStyle = chipMode ? '#0d1512' : (e.night ? '#262b31' : (e.rain ? '#454c54' : '#3c4147'));
+        ctx.fillRect(0, ROAD_TOP, W, ROAD_BOT - ROAD_TOP);
+        if(!chipMode && e.rain){
+          ctx.fillStyle = 'rgba(170,200,230,.10)';
+          ctx.fillRect(0, ROAD_TOP, W, ROAD_BOT - ROAD_TOP);
+        }
+        // trees (world only)
+        if(!chipMode){
+          ctx.fillStyle = e.night ? '#16281a' : '#5d8a4e';
+          var off = -(S.camX % 130);
+          for(var tx = off; tx < W + 60; tx += 130){
+            ctx.beginPath(); ctx.arc(tx + 90, H - 42, 18, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(tx + 104, H - 52, 12, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.fillStyle = '#7a5c38';
+          for(var bx2 = off; bx2 < W + 60; bx2 += 130){ ctx.fillRect(bx2 + 87, H - 30, 6, 12); }
+          // street lamps
+          var loff = -(S.camX % 260);
+          ctx.fillStyle = '#565e66';
+          for(var lx = loff; lx < W + 40; lx += 260){
+            ctx.fillRect(lx + 30, ROAD_TOP - 34, 4, 22);
+            ctx.fillRect(lx + 30, ROAD_TOP - 34, 16, 4);
+            if(e.night){
+              ctx.fillStyle = 'rgba(255,216,130,.9)';
+              ctx.beginPath(); ctx.arc(lx + 48, ROAD_TOP - 30, 4, 0, Math.PI * 2); ctx.fill();
+              ctx.fillStyle = 'rgba(255,216,130,.12)';
+              ctx.beginPath(); ctx.arc(lx + 48, ROAD_TOP - 30, 22, 0, Math.PI * 2); ctx.fill();
+              ctx.fillStyle = '#565e66';
+            }
+          }
+        }
+        // crosswalks
+        for(var c=0;c<S.crosswalks.length;c++){
+          var cx = S.crosswalks[c] - S.camX;
+          if(cx < -90 || cx > W + 40) continue;
+          if(chipMode){
+            ctx.strokeStyle = '#39d98a'; ctx.lineWidth = 2; ctx.setLineDash([6,5]);
+            ctx.strokeRect(cx, ROAD_TOP, 56, ROAD_BOT - ROAD_TOP);
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#39d98a'; ctx.font = '12px ui-monospace,monospace';
+            ctx.fillText('斑马线 crosswalk', cx, ROAD_TOP - 10);
+          } else {
+            ctx.fillStyle = e.night ? 'rgba(220,220,215,.5)' : 'rgba(240,240,235,.85)';
+            for(var s=0;s<6;s++){
+              ctx.fillRect(cx, ROAD_TOP + 12 + s * ((ROAD_BOT - ROAD_TOP - 24) / 6), 56, 22);
+            }
+          }
+        }
+        // lane lines
+        for(var l=0;l<2;l++){
+          var ly = ROAD_TOP + LANE_H * (l + 1);
+          if(chipMode){
+            ctx.strokeStyle = '#e8f542'; ctx.lineWidth = 2.5;
+            ctx.beginPath(); ctx.moveTo(0,ly); ctx.lineTo(W,ly); ctx.stroke();
+            if(l===0){ ctx.fillStyle='#e8f542'; ctx.font='12px ui-monospace,monospace'; ctx.fillText('车道线 lane', 12, ly-8); }
+          } else {
+            ctx.fillStyle = e.night ? 'rgba(230,230,220,.45)' : 'rgba(245,245,240,.75)';
+            var dashOff = -(S.camX % 56);
+            for(var dxx = dashOff; dxx < W + 40; dxx += 56) ctx.fillRect(dxx, ly - 3, 34, 6);
+          }
+        }
+        // road edges
+        ctx.fillStyle = chipMode ? '#39d98a' : '#f2c230';
+        ctx.fillRect(0, ROAD_TOP - 3, W, 5);
+        ctx.fillRect(0, ROAD_BOT - 2, W, 5);
+        // chip extras: range rings + detection fan + detection boundary
+        if(chipMode){
+          var grad = ctx.createLinearGradient(CAR_X + CAR_W, 0, W, 0);
+          grad.addColorStop(0,'rgba(57,217,138,.14)');
+          grad.addColorStop(1,'rgba(57,217,138,0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.moveTo(CAR_X + CAR_W, S.carY);
+          ctx.lineTo(W, S.carY - 190);
+          ctx.lineTo(W, S.carY + 190);
+          ctx.closePath(); ctx.fill();
+          ctx.strokeStyle = 'rgba(57,217,138,.28)'; ctx.lineWidth = 1;
+          for(var r=110;r<=330;r+=110){
+            ctx.beginPath(); ctx.arc(CAR_X + CAR_W, S.carY, r, -0.9, 0.9); ctx.stroke();
+          }
+          ctx.fillStyle = 'rgba(57,217,138,.75)'; ctx.font = '11px ui-monospace,monospace';
+          ctx.fillText('10m', CAR_X + CAR_W + 104, S.carY - 66);
+          ctx.fillText('20m', CAR_X + CAR_W + 214, S.carY - 128);
+          ctx.fillText('30m', CAR_X + CAR_W + 322, S.carY - 186);
+          if(e.detPx < 1200){
+            var bxLine = CAR_X + e.detPx;
+            ctx.strokeStyle = '#ff5147'; ctx.lineWidth = 2; ctx.setLineDash([8,6]);
+            ctx.beginPath(); ctx.moveTo(bxLine, ROAD_TOP); ctx.lineTo(bxLine, ROAD_BOT); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ff5147'; ctx.font = 'bold 12px ui-monospace,monospace';
+            ctx.fillText('检测边界 ≈ ' + Math.round(e.detPx / PX_PER_M) + 'm', Math.min(bxLine + 8, W - 170), ROAD_TOP + 18);
+          }
+        }
+      }
+
+      function drawCarShape(ctx, x, y, bodyColor, roofColor, brakeOn, hazard){
+        ctx.fillStyle = 'rgba(0,0,0,.25)';
+        ctx.beginPath(); ctx.ellipse(x + CAR_W/2, y + CAR_H/2 + 5, CAR_W/2, 12, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = bodyColor;
+        roundRect(ctx, x, y - CAR_H/2, CAR_W, CAR_H, 14); ctx.fill();
+        ctx.fillStyle = roofColor;
+        roundRect(ctx, x + 30, y - CAR_H/2 + 8, 38, CAR_H - 16, 9); ctx.fill();
+        ctx.fillStyle = '#bfe0f5';
+        roundRect(ctx, x + 36, y - CAR_H/2 + 12, 13, CAR_H - 24, 5); ctx.fill();
+        roundRect(ctx, x + 53, y - CAR_H/2 + 12, 10, CAR_H - 24, 5); ctx.fill();
+        ctx.fillStyle = '#14181c';
+        roundRect(ctx, x + 10, y - CAR_H/2 - 4, 18, 8, 3); ctx.fill();
+        roundRect(ctx, x + CAR_W - 28, y - CAR_H/2 - 4, 18, 8, 3); ctx.fill();
+        roundRect(ctx, x + 10, y + CAR_H/2 - 4, 18, 8, 3); ctx.fill();
+        roundRect(ctx, x + CAR_W - 28, y + CAR_H/2 - 4, 18, 8, 3); ctx.fill();
+        ctx.fillStyle = '#ffe9a3';
+        ctx.fillRect(x + CAR_W - 3, y - CAR_H/2 + 7, 4, 9);
+        ctx.fillRect(x + CAR_W - 3, y + CAR_H/2 - 16, 4, 9);
+        var rear = brakeOn ? '#ff2d1e' : '#8f1d12';
+        if(hazard && Math.sin(S.simTime * 6) > 0) rear = '#ffb300';
+        ctx.fillStyle = rear;
+        ctx.fillRect(x - 1, y - CAR_H/2 + 7, 4, 9);
+        ctx.fillRect(x - 1, y + CAR_H/2 - 16, 4, 9);
+        if(brakeOn){
+          ctx.fillStyle = 'rgba(255,45,30,.25)';
+          ctx.fillRect(x - 9, y - CAR_H/2 + 4, 8, 15);
+          ctx.fillRect(x - 9, y + CAR_H/2 - 19, 8, 15);
+        }
+      }
+
+      function drawCar(ctx, chipMode){
+        var x = CAR_X, y = S.carY;
+        if(chipMode){
+          ctx.strokeStyle = '#4dc3ff'; ctx.lineWidth = 2.5;
+          ctx.strokeRect(x, y - CAR_H/2, CAR_W, CAR_H);
+          ctx.fillStyle = '#4dc3ff'; ctx.font = 'bold 13px ui-monospace,monospace';
+          ctx.fillText('自车 ego', x + 16, y + 5);
+          return;
+        }
+        var braking = S.aebActive || manualBrake > 0 || (!S.running && S.speedMS > 0.3);
+        var grad = ctx.createLinearGradient(x, y - CAR_H/2, x, y + CAR_H/2);
+        grad.addColorStop(0, '#3a86e8'); grad.addColorStop(0.55, '#2266c9'); grad.addColorStop(1, '#1a4f9e');
+        drawCarShape(ctx, x, y, grad, '#2f7fe0', braking, false);
+      }
+
+      function roundRect(ctx, x, y, w, h, r){
+        ctx.beginPath();
+        ctx.moveTo(x+r, y);
+        ctx.arcTo(x+w, y, x+w, y+h, r);
+        ctx.arcTo(x+w, y+h, x, y+h, r);
+        ctx.arcTo(x, y+h, x, y, r);
+        ctx.arcTo(x, y, x+w, y, r);
+        ctx.closePath();
+      }
+
+      function drawPedFigure(ctx, x, y){
+        var e = env();
+        var bob = Math.sin(S.simTime * 9 + x) * 2;
+        ctx.fillStyle = 'rgba(0,0,0,.22)';
+        ctx.beginPath(); ctx.ellipse(x, y + 24, 13, 4, 0, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#20303f'; ctx.fillStyle = '#20303f';
+        ctx.beginPath(); ctx.arc(x, y - 18 + bob*0.3, 7, 0, Math.PI*2); ctx.fill();
+        ctx.lineWidth = 5; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(x, y - 11); ctx.lineTo(x, y + 6); ctx.stroke();
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(x, y - 6); ctx.lineTo(x - 8, y + 3 + bob); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, y - 6); ctx.lineTo(x + 8, y + 3 - bob); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, y + 6); ctx.lineTo(x - 7, y + 20 + bob); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, y + 6); ctx.lineTo(x + 7, y + 20 - bob); ctx.stroke();
+        ctx.fillStyle = e.night ? '#d7e94a' : '#e2572b';   // reflective vest at night
+        ctx.beginPath(); ctx.arc(x, y - 4, 5, 0, Math.PI*2); ctx.fill();
+        if(e.night){
+          ctx.fillStyle = 'rgba(215,233,74,.35)';
+          ctx.beginPath(); ctx.arc(x, y - 4, 10, 0, Math.PI*2); ctx.fill();
+        }
+      }
+
+      function drawObstacleFigure(ctx, o, sx){
+        var y = LANE_Y[o.lane];
+        if(o.kind === 'cone'){
+          ctx.fillStyle = 'rgba(0,0,0,.2)';
+          ctx.beginPath(); ctx.ellipse(sx, y + 19, 14, 4, 0, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#e86a17';
+          ctx.beginPath();
+          ctx.moveTo(sx - 9, y + 16); ctx.lineTo(sx, y - 18); ctx.lineTo(sx + 9, y + 16); ctx.closePath(); ctx.fill();
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(sx - 5.5, y - 2, 11, 5);
+          ctx.fillStyle = '#c4520d'; ctx.fillRect(sx - 13, y + 14, 26, 5);
+        } else if(o.kind === 'car'){
+          var blink = Math.sin(S.simTime * 6) > 0;
+          drawCarShapeAt(ctx, sx, y, '#7d8894', '#98a5b1', blink);
+        } else {
+          ctx.fillStyle = 'rgba(0,0,0,.2)';
+          ctx.beginPath(); ctx.ellipse(sx, y + 22, 24, 5, 0, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#8a6b3d';
+          roundRect(ctx, sx - 22, y - 20, 44, 40, 4); ctx.fill();
+          ctx.strokeStyle = '#6d5430'; ctx.lineWidth = 3;
+          ctx.strokeRect(sx - 22, y - 20, 44, 40);
+          ctx.beginPath(); ctx.moveTo(sx - 22, y); ctx.lineTo(sx + 22, y); ctx.stroke();
+        }
+      }
+      // generic car centred at (cx, cy)
+      function drawCarShapeAt(ctx, cx, cy, body, roof, hazardOn){
+        drawCarShape(ctx, cx - CAR_W/2, cy, body, roof, false, hazardOn);
+      }
+
+      var BOX_COLORS = { ped:'#ff5147', obs:'#ffb02e', lead:'#4dc3ff', parked:'#9fb4c7' };
+      function drawBoxes(ctx, dets, forChip){
+        if(!S.showBoxes && !forChip) return;
+        for(var i=0;i<dets.length;i++){
+          var d = dets[i];
+          var col = BOX_COLORS[d.type] || '#ffb02e';
+          var bx = d.sx - d.w/2, by = d.sy - d.h/2;
+          var hot = forChip && d.inPath && d.sx > CAR_X && d.distM < 20;
+          ctx.strokeStyle = col; ctx.lineWidth = forChip ? 2.5 : 2;
+          if(hot && Math.sin(S.simTime * 10) > 0) ctx.lineWidth = 4;
+          ctx.strokeRect(bx, by, d.w, d.h);
+          ctx.lineWidth = 4;
+          var L = 10;
+          ctx.beginPath();
+          ctx.moveTo(bx, by + L); ctx.lineTo(bx, by); ctx.lineTo(bx + L, by);
+          ctx.moveTo(bx + d.w - L, by); ctx.lineTo(bx + d.w, by); ctx.lineTo(bx + d.w, by + L);
+          ctx.moveTo(bx + d.w, by + d.h - L); ctx.lineTo(bx + d.w, by + d.h); ctx.lineTo(bx + d.w - L, by + d.h);
+          ctx.moveTo(bx + L, by + d.h); ctx.lineTo(bx, by + d.h); ctx.lineTo(bx, by + d.h - L);
+          ctx.stroke();
+          var confJitter = Math.round(d.conf * 100 + Math.sin(S.simTime*3 + d.sx)*0.6);
+          var label = (d.tag ? d.tag + ' ' : '') + d.label + ' ' + confJitter + '% · ' + d.distM.toFixed(1) + 'm';
+          ctx.font = 'bold 13px ui-monospace, Menlo, monospace';
+          var tw = ctx.measureText(label).width + 12;
+          ctx.fillStyle = col;
+          ctx.fillRect(bx, Math.max(2, by - 22), tw, 20);
+          ctx.fillStyle = '#10130f';
+          ctx.fillText(label, bx + 6, Math.max(16, by - 8));
+          if(forChip){
+            // velocity vector + predicted path for pedestrians
+            if(d.type === 'ped' && d.obj.state === 'crossing'){
+              var dir = d.obj.vy > 0 ? 1 : -1;
+              ctx.strokeStyle = 'rgba(255,81,71,.65)'; ctx.lineWidth = 2; ctx.setLineDash([4,4]);
+              ctx.beginPath(); ctx.moveTo(d.sx, d.sy); ctx.lineTo(d.sx, d.sy + dir * 78); ctx.stroke();
+              ctx.setLineDash([]);
+              ctx.fillStyle = '#ff5147';
+              ctx.beginPath();
+              ctx.moveTo(d.sx, d.sy + dir * 88);
+              ctx.lineTo(d.sx - 5, d.sy + dir * 76);
+              ctx.lineTo(d.sx + 5, d.sy + dir * 76);
+              ctx.closePath(); ctx.fill();
+            }
+            if(d.type === 'lead'){
+              ctx.strokeStyle = 'rgba(77,195,255,.7)'; ctx.lineWidth = 2;
+              ctx.beginPath(); ctx.moveTo(d.sx + d.w/2, d.sy); ctx.lineTo(d.sx + d.w/2 + 34, d.sy); ctx.stroke();
+              ctx.fillStyle = '#4dc3ff';
+              ctx.beginPath();
+              ctx.moveTo(d.sx + d.w/2 + 44, d.sy);
+              ctx.lineTo(d.sx + d.w/2 + 32, d.sy - 5);
+              ctx.lineTo(d.sx + d.w/2 + 32, d.sy + 5);
+              ctx.closePath(); ctx.fill();
+            }
+          }
+          if(d.inPath && d.sx > CAR_X){
+            ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.setLineDash([5,5]);
+            ctx.beginPath(); ctx.moveTo(CAR_X + CAR_W, S.carY); ctx.lineTo(bx, d.sy); ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        }
+      }
+
+      function render(dets){
+        var e = env();
+        /* world view */
+        wctx.clearRect(0,0,W,H);
+        drawRoad(wctx, false);
+        for(var i=0;i<S.parked.length;i++){
+          var pkx = S.parked[i].worldX - S.camX;
+          if(pkx > -120 && pkx < W + 120) drawCarShapeAt(wctx, pkx, ROAD_TOP - 32, '#5d6a76', '#75828e', false);
+        }
+        if(S.lead){
+          var lsx = S.lead.worldX - S.camX;
+          if(lsx > -140 && lsx < W + 140){
+            drawCarShapeAt(wctx, lsx, LANE_Y[S.lead.lane], '#c9522e', '#e06a3f', false);
+            if(S.lead.braking){
+              wctx.fillStyle = '#ff2d1e';
+              wctx.fillRect(lsx - CAR_W/2 - 2, LANE_Y[S.lead.lane] - CAR_H/2 + 7, 4, 9);
+              wctx.fillRect(lsx - CAR_W/2 - 2, LANE_Y[S.lead.lane] + CAR_H/2 - 16, 4, 9);
+              wctx.fillStyle = 'rgba(255,45,30,.3)';
+              wctx.fillRect(lsx - CAR_W/2 - 11, LANE_Y[S.lead.lane] - CAR_H/2 + 4, 8, 15);
+              wctx.fillRect(lsx - CAR_W/2 - 11, LANE_Y[S.lead.lane] + CAR_H/2 - 19, 8, 15);
+            }
+          }
+        }
+        for(var j=0;j<S.obstacles.length;j++){
+          var o = S.obstacles[j];
+          var osx = o.worldX - S.camX;
+          if(osx > -120 && osx < W + 120) drawObstacleFigure(wctx, o, osx);
+        }
+        for(var m=0;m<S.peds.length;m++){
+          var p = S.peds[m];
+          var psx = p.worldX - S.camX;
+          if(psx > -60 && psx < W + 60) drawPedFigure(wctx, psx, p.y);
+        }
+        drawCar(wctx, false);
+        drawBoxes(wctx, dets, false);
+        // weather / lighting overlays
+        if(e.rain){
+          wctx.strokeStyle = 'rgba(190,215,240,.5)'; wctx.lineWidth = 1.5;
+          wctx.beginPath();
+          for(var ri=0;ri<46;ri++){
+            var rx = (ri * 173 + S.simTime * 620) % (W + 60) - 30;
+            var ry = (ri * 97 + S.simTime * 900) % (H + 40) - 20;
+            wctx.moveTo(rx, ry); wctx.lineTo(rx - 5, ry + 15);
+          }
+          wctx.stroke();
+        }
+        if(e.night){
+          wctx.fillStyle = 'rgba(7,11,28,.5)';
+          wctx.fillRect(0, 0, W, H);
+          // headlight beam
+          wctx.globalCompositeOperation = 'lighter';
+          var beam = wctx.createLinearGradient(CAR_X + CAR_W, 0, W, 0);
+          beam.addColorStop(0, 'rgba(255,240,190,.34)');
+          beam.addColorStop(1, 'rgba(255,240,190,0)');
+          wctx.fillStyle = beam;
+          wctx.beginPath();
+          wctx.moveTo(CAR_X + CAR_W, S.carY - 12);
+          wctx.lineTo(W, S.carY - 130);
+          wctx.lineTo(W, S.carY + 130);
+          wctx.lineTo(CAR_X + CAR_W, S.carY + 12);
+          wctx.closePath(); wctx.fill();
+          wctx.globalCompositeOperation = 'source-over';
+        }
+
+        /* chip view */
+        cctx.clearRect(0,0,W,H);
+        drawRoad(cctx, true);
+        drawCar(cctx, true);
+        drawBoxes(cctx, dets, true);
+        var sweepX = (S.simTime * 140) % (W + 200) - 100;
+        var g = cctx.createLinearGradient(sweepX - 60, 0, sweepX, 0);
+        g.addColorStop(0, 'rgba(57,217,138,0)');
+        g.addColorStop(1, 'rgba(57,217,138,.10)');
+        cctx.fillStyle = g;
+        cctx.fillRect(sweepX - 60, ROAD_TOP, 60, ROAD_BOT - ROAD_TOP);
+        cctx.fillStyle = '#8fb89c';
+        cctx.font = '12px ui-monospace, monospace';
+        cctx.fillText('frame ' + Math.floor(S.simTime * 30) + ' · objects: ' + dets.length + ' · ' + e.envTag, 12, H - 14);
+        if(S.aebActive && S.aeb){
+          cctx.fillStyle = 'rgba(255,81,71,.16)';
+          cctx.fillRect(0, ROAD_TOP, W, ROAD_BOT - ROAD_TOP);
+          cctx.fillStyle = '#ff5147';
+          cctx.font = 'bold 20px ui-monospace, monospace';
+          cctx.fillText('AEB BRAKING', W - 190, ROAD_TOP + 30);
+        }
+      }
+
+      /* ------- main loop ------- */
+      var lastTs = null, fpsCount = 0, fpsTime = 0;
+      function loop(ts){
+        if(lastTs == null) lastTs = ts;
+        var dt = Math.min(0.05, (ts - lastTs) / 1000);
+        lastTs = ts;
+        var res = step(dt);
+        render(res.dets);
+        fpsCount++; fpsTime += dt;
+        if(fpsTime >= 1){
+          fpsTag.textContent = '约 ' + Math.round(fpsCount / fpsTime) + ' FPS 推理中';
+          fpsCount = 0; fpsTime = 0;
+        }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+
+      /* ------- controls ------- */
+      function resetSim(){
+        var keepTarget = S.targetKmh, keepAeb = S.aeb, keepBoxes = S.showBoxes, keepScen = S.scenario;
+        S = freshState();
+        S.targetKmh = keepTarget; S.aeb = keepAeb; S.showBoxes = keepBoxes; S.scenario = keepScen;
+        document.getElementById('chkAeb').checked = keepAeb;
+        document.getElementById('chkBoxes').checked = keepBoxes;
+        document.getElementById('speedRange').value = keepTarget;
+        document.getElementById('speedRead').textContent = keepTarget + ' km/h';
+        manualBrake = 0;
+        btnGo.textContent = '▶ 起步';
+        hideAlert();
+        setupScenario();
+        logEvent('场景已重置：' + SCEN[keepScen].label);
+      }
+      document.getElementById('pdBtnReset').addEventListener('click', resetSim);
+
+      function setScenario(name){
+        S.scenario = name;
+        var btns = document.querySelectorAll('#scenRow button');
+        for(var i=0;i<btns.length;i++){
+          btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-scen') === name ? 'true' : 'false');
+        }
+        scenDesc.textContent = SCEN[name].desc;
+        envTag.textContent = SCEN[name].envTag;
+        resetSim();
+      }
+      var scenBtns = document.querySelectorAll('#scenRow button');
+      for(var b=0;b<scenBtns.length;b++){
+        (function(btn){
+          btn.addEventListener('click', function(){ setScenario(btn.getAttribute('data-scen')); });
+        })(scenBtns[b]);
+      }
+
+      btnGo.addEventListener('click', function(){
+        if(S.crashed) return;
+        S.running = !S.running;
+        btnGo.textContent = S.running ? '⏸ 暂停' : '▶ 起步';
+        if(S.running) logEvent('车辆起步，目标速度 ' + S.targetKmh + ' km/h');
+      });
+      document.getElementById('btnBrake').addEventListener('click', function(){
+        manualBrake = 40; S.running = false; btnGo.textContent = '▶ 起步';
+        logEvent('驾驶员踩下刹车');
+      });
+      function laneUp(){ if(S.lane > 0){ S.lane--; logEvent('变道至上方车道'); } }
+      function laneDown(){ if(S.lane < 2){ S.lane++; logEvent('变道至下方车道'); } }
+      document.getElementById('btnLaneUp').addEventListener('click', laneUp);
+      document.getElementById('btnLaneDown').addEventListener('click', laneDown);
+      document.getElementById('btnPed').addEventListener('click', function(){ spawnPed(null); });
+      document.getElementById('btnObstacle').addEventListener('click', spawnObstacle);
+
+      var speedRange = document.getElementById('speedRange');
+      var speedRead = document.getElementById('speedRead');
+      speedRange.addEventListener('input', function(){
+        S.targetKmh = parseInt(speedRange.value, 10);
+        speedRead.textContent = S.targetKmh + ' km/h';
+      });
+      document.getElementById('chkAeb').addEventListener('change', function(ev){
+        S.aeb = ev.target.checked;
+        logEvent(S.aeb ? 'AEB 已开启' : 'AEB 已关闭——再遇行人只能靠你手动刹车', S.aeb ? 'ev-ok' : 'ev-warn');
+        if(!S.aeb) S.aebActive = false;
+      });
+      document.getElementById('chkBoxes').addEventListener('change', function(ev){
+        S.showBoxes = ev.target.checked;
+      });
+
+      document.addEventListener('keydown', function(ev){
+        if(document.getElementById('demoOverlayPerception').hidden) return;
+        if(ev.target && (ev.target.tagName === 'INPUT' && ev.target.type !== 'range')) return;
+        var k = ev.key.toLowerCase();
+        if(k === ' '){ ev.preventDefault(); manualBrake = 40; S.running = false; btnGo.textContent = '▶ 起步'; logEvent('驾驶员急刹'); }
+        else if(k === 'w' || k === 'arrowup'){
+          if(k === 'arrowup') ev.preventDefault();
+          S.targetKmh = Math.min(72, S.targetKmh + 4); speedRange.value = S.targetKmh; speedRead.textContent = S.targetKmh + ' km/h';
+          if(k === 'w' && !S.running && !S.crashed){ S.running = true; btnGo.textContent = '⏸ 暂停'; }
+        }
+        else if(k === 's' || k === 'arrowdown'){
+          if(k === 'arrowdown') ev.preventDefault();
+          S.targetKmh = Math.max(10, S.targetKmh - 4); speedRange.value = S.targetKmh; speedRead.textContent = S.targetKmh + ' km/h';
+        }
+        else if(k === 'a'){ laneUp(); }
+        else if(k === 'd'){ laneDown(); }
+      });
+
+      scenDesc.textContent = SCEN.day.desc;
+      envTag.textContent = SCEN.day.envTag;
+      logEvent('演示就绪：点「起步」，或按「放一个行人过马路」看 AEB 怎么工作；下方还有六个场景可以切换');
+      setupScenario();
+    })();
+        </script>
+    <script>
+      /* ================= 个人工作台（内嵌） ================= */
+      (function(){
+        var wbRoot = document.getElementById('demoOverlayWorkbench');
+        if(!wbRoot) return;
+        var buttons = Array.prototype.slice.call(wbRoot.querySelectorAll('.navbtn'));
+        var panels = {};
+        wbRoot.querySelectorAll('.panel').forEach(function(p){ panels[p.id.replace('panel-', '')] = p; });
+        function show(key){
+          Object.keys(panels).forEach(function(k){ panels[k].classList.toggle('active', k === key); });
+          buttons.forEach(function(b){ b.setAttribute('aria-selected', b.getAttribute('data-target') === key ? 'true' : 'false'); });
+          wbRoot.scrollTop = 0;
+        }
+        buttons.forEach(function(b){
+          b.addEventListener('click', function(){ show(b.getAttribute('data-target')); });
+        });
+        wbRoot.querySelectorAll('.quickbtn').forEach(function(b){
+          b.addEventListener('click', function(){ show(b.getAttribute('data-target')); });
+        });
+        (function(){
+          function dayNum(d){ return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+          var today = dayNum(new Date());
+          var next = null;
+          wbRoot.querySelectorAll('.exam').forEach(function(row){
+            var parts = row.getAttribute('data-date').split('-');
+            var target = dayNum(new Date(+parts[0], +parts[1] - 1, +parts[2]));
+            var diff = target - today;
+            var nEl = row.querySelector('.cd .n');
+            var uEl = row.querySelector('.cd .u');
+            var name = row.querySelector('.what .t').textContent.replace(/\s+/g, ' ').trim();
+            if(diff > 0){ nEl.textContent = diff; uEl.textContent = '天后'; }
+            else if(diff === 0){ nEl.textContent = '今天'; uEl.textContent = '考试'; }
+            else { row.classList.add('past'); nEl.textContent = '已考完'; uEl.textContent = ''; }
+            if(diff >= 0 && (next === null || diff < next.diff)) next = { diff: diff, name: name, date: parts[1] + '月' + parts[2] + '日' };
+          });
+          var numEl = wbRoot.querySelector('#nx-num');
+          var labEl = wbRoot.querySelector('#nx-lab');
+          var subEl = wbRoot.querySelector('#nx-sub');
+          if(next){
+            numEl.innerHTML = next.diff === 0 ? '今天' : next.diff + '<span style="font-size:16px"> 天</span>';
+            labEl.textContent = '下一场：' + next.name;
+            subEl.textContent = next.date + (next.diff === 0 ? ' · 就是今天' : ' · 倒计时进行中');
+          } else {
+            numEl.textContent = '完';
+            labEl.textContent = '本学期考试已全部结束';
+            subEl.textContent = '工作台会随下学期安排更新';
+          }
+        })();
+      })();
+    </script>
+    <script>
+      /* ================= 内嵌演示开关 ================= */
+      (function(){
+        function openDemo(id){
+          var o = document.getElementById(id); if(!o) return;
+          o.hidden = false; document.body.style.overflow = "hidden"; o.scrollTop = 0;
+          window.dispatchEvent(new Event("resize"));
+        }
+        function closeDemo(o){ o.hidden = true; document.body.style.overflow = ""; }
+        document.querySelectorAll("[data-open-demo]").forEach(function(b){
+          b.addEventListener("click", function(){ openDemo(b.getAttribute("data-open-demo")); });
+        });
+        document.querySelectorAll("[data-close-demo]").forEach(function(b){
+          b.addEventListener("click", function(){ var o = b.closest(".demo-overlay"); if(o) closeDemo(o); });
+        });
+        document.addEventListener("keydown", function(ev){
+          if(ev.key !== "Escape") return;
+          document.querySelectorAll(".demo-overlay:not([hidden])").forEach(closeDemo);
+        });
+      })();
+    </script>
+
+    <script>
+      /* ================= 终端打字机 ================= */
+      (function(){
+        var lines = [
+          { t:'$ 我想做一个能用手势控制的星尘页面', c:'p' },
+          { t:'> 先拆需求：摄像头 → 手势关键点 → 粒子映射', c:'' },
+          { t:'> 生成骨架… 接入 MediaPipe Hands', c:'' },
+          { t:'> 真机测试发现帧率太低', c:'' },
+          { t:'> 改：降低关键点检测频率，粒子数分级', c:'' },
+          { t:'✓ 部署上线 kznee.github.io/palmfield', c:'ok' }
+        ];
+        var box = document.getElementById('termBody');
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function render(uptoLine, uptoChar){
+          var html = '';
+          for (var i = 0; i < lines.length; i++){
+            if (i < uptoLine) html += '<span class="' + lines[i].c + '">' + lines[i].t + '</span>\n';
+            else if (i === uptoLine) html += '<span class="' + lines[i].c + '">' + lines[i].t.slice(0, uptoChar) + '</span>';
+            else break;
+          }
+          box.innerHTML = html + '<span class="cursor"></span>';
+        }
+        if (reduced){ render(lines.length, 0); box.querySelector('.cursor').remove(); return; }
+        var li = 0, ci = 0;
+        function tick(){
+          if (li >= lines.length){ return; }
+          ci++;
+          if (ci > lines[li].t.length){ li++; ci = 0; render(li, 0); setTimeout(tick, 340); return; }
+          render(li, ci);
+          setTimeout(tick, 26);
+        }
+        render(0,0);
+        setTimeout(tick, 400);
+      })();
+
+      /* ================= 协作流程 ================= */
+      (function(){
+        var steps = [
+          { name:'拆需求', title:'第 1 步 · 拆需求：先想清楚，再开口',
+            desc:'不直接对 AI 说“帮我做个网页”。先把目标拆成可执行的小块：给谁用、核心功能是哪几个、用什么技术、什么算做完。这一步全是我自己的活，拆得越细，后面返工越少。',
+            ex:'<span class="dim"># 以掌间星尘为例，我先写下：</span>\n目标：摄像头手势控制粒子，单页，手机可用\n核心：关键点识别 / 粒子系统 / 手势→参数映射\n做完的标准：双端打开不卡，捏合有反应' },
+          { name:'写提示词', title:'第 2 步 · 写提示词：把需求写成工单',
+            desc:'把第 1 步的拆解写成结构化提示词：背景、技术约束、输出格式、验收标准一次说清。提示词不是咒语，是给协作方的任务说明——上面「提示词实验室」里有我三版迭代的完整复盘。',
+            ex:'结构固定四件套：\n① 背景与目标  ② 技术约束\n③ 分步要求    ④ 验收标准与边界情况' },
+          { name:'生成初稿', title:'第 3 步 · 生成初稿：要骨架，不要一次到位',
+            desc:'让 AI 先给最小可运行版本，而不是一口气生成“完整成品”。初稿越小，出问题时越容易定位。复杂的活分几轮要：先骨架，再逐个功能往上加。',
+            ex:'<span class="dim"># 我的常用说法：</span>\n“先只做能跑通的最小版本，\n不要加任何额外功能，我确认后再继续。”' },
+          { name:'运行验证', title:'第 4 步 · 运行验证：不跑过的代码等于没写',
+            desc:'初稿必须立刻运行：真机打开、按正常路径走一遍、再按极端情况折腾一遍，看控制台报错。AI 的代码是“概率上像对的”，只有运行能把它变成“实际上是对的”。这一步是我整套流程里最不肯省的。',
+            ex:'验证清单（每件作品都走）：\n□ 电脑 + 手机双端打开\n□ 极端输入 / 断网 / 拒绝权限\n□ 控制台零报错' },
+          { name:'改与迭代', title:'第 5 步 · 改与迭代：把报错原样喂回去',
+            desc:'发现问题不自己硬扛，也不推倒重来：把报错信息、复现步骤、期望结果一起发回给 AI，让它针对性修。涉及判断的改动（参数、难度、权重）我自己拍板，只让它执行。',
+            ex:'<span class="dim"># 一次真实的迭代指令：</span>\n“手机端帧率只有 20，把关键点检测\n改成隔帧执行，粒子上限降到 3000，\n其他逻辑不要动。”' },
+          { name:'部署上线', title:'第 6 步 · 部署上线：做完不算完，能打开才算',
+            desc:'通过 GitHub Pages 把作品部署成任何人能打开的链接。上线后再从别人手机上打开一次——本地能跑和线上能跑是两回事，缓存、路径、权限都可能在线上才暴露。',
+            ex:'已上线：\n· kznee.github.io/palmfield\n· kznee.github.io/jieguang-shadowplay\n· 晶体对比、感知演示与个人工作台：原独立页面已整页并入本作品集，点作品卡即可在本页打开' }
+        ];
+        var btnsWrap = document.getElementById('flowBtns');
+        var title = document.getElementById('flowTitle');
+        var desc = document.getElementById('flowDesc');
+        var ex = document.getElementById('flowEx');
+        steps.forEach(function(s, i){
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'flow-btn';
+          b.setAttribute('role','tab');
+          b.innerHTML = '<span class="num">' + (i+1) + '</span>' + s.name;
+          b.addEventListener('click', function(){ select(i); });
+          btnsWrap.appendChild(b);
+        });
+        function select(i){
+          var all = btnsWrap.querySelectorAll('.flow-btn');
+          all.forEach(function(b, j){ b.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
+          title.textContent = steps[i].title;
+          desc.textContent = steps[i].desc;
+          ex.innerHTML = steps[i].ex;
+        }
+        select(0);
+      })();
+
+      /* ================= 提示词实验室 ================= */
+      (function(){
+        var vers = [
+          { label:'V1 · 许愿式',
+            prompt:'帮我写一个手势控制网页的代码，要很酷。',
+            added:['只有一句愿望：没说用什么技术、什么形式','没提摄像头权限、移动端、性能任何约束'],
+            score:25,
+            note:'产出是一段泛泛的示例代码：没有手势识别的完整接入，复制下来跑不起来，只能当参考。' },
+          { label:'V2 · 加约束',
+            prompt:'用单个 HTML 文件做一个手势互动网页：\n- 用 MediaPipe Hands 做手部关键点识别，摄像头画面只在本地处理\n- 粒子用 Canvas 绘制，粒子位置跟随食指指尖移动\n- 必须能在手机浏览器打开，给出完整可运行代码',
+            added:['指定技术栈：MediaPipe Hands + Canvas','指定交付形式：单文件、完整可运行','补上隐私与平台约束：本地处理、手机可用'],
+            score:60,
+            note:'代码能跑起来了，但帧率和手势种类没管：手机端明显卡顿，也只有“跟随”一个动作。' },
+          { label:'V3 · 工单式',
+            prompt:'分三步做一个手势控制星尘的单页应用，每步等我确认再继续：\n\n第 1 步（本次）：只搭骨架——摄像头权限申请与拒绝时的提示、\nMediaPipe Hands 接入、空白 Canvas，给出可运行代码。\n\n后续需求先记下：第 2 步加粒子系统与指尖跟随；\n第 3 步加捏合/张开手势，并做性能优化（隔帧检测、粒子数上限）。\n\n验收标准：电脑与手机打开无报错；权限被拒时有明确提示；\n不许使用任何需要付费的服务。',
+            added:['分步交付：先骨架后功能，每步可验证','提前写明验收标准与边界情况（权限被拒怎么办）','把性能要求写进需求，而不是出问题再补'],
+            score:90,
+            note:'这一版的产出可以直接往下推进：骨架一次通过，后两步按计划叠加，帧率问题在设计阶段就被堵住。' }
+        ];
+        var btnsWrap = document.getElementById('verBtns');
+        var pText = document.getElementById('promptText');
+        var pAdded = document.getElementById('promptAdded');
+        var pMeter = document.getElementById('promptMeter');
+        var pNote = document.getElementById('promptNote');
+        vers.forEach(function(v, i){
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'ver-btn';
+          b.textContent = v.label;
+          b.addEventListener('click', function(){ select(i); });
+          btnsWrap.appendChild(b);
+        });
+        function select(i){
+          var all = btnsWrap.querySelectorAll('.ver-btn');
+          all.forEach(function(b, j){ b.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
+          pText.textContent = vers[i].prompt;
+          pAdded.innerHTML = '';
+          vers[i].added.forEach(function(a){
+            var li = document.createElement('li');
+            li.textContent = a;
+            pAdded.appendChild(li);
+          });
+          pMeter.style.width = vers[i].score + '%';
+          pNote.textContent = '可用度 ' + vers[i].score + ' / 100 —— ' + vers[i].note;
+        }
+        select(2);
+      })();
+
+      /* ================= 从噪点里长出图（扩散模型）实验 ================= */
+      (function(){
+        var canvas = document.getElementById('dfCanvas');
+        var slider = document.getElementById('dfSlider');
+        var stepLabel = document.getElementById('dfStepLabel');
+        var phaseEl = document.getElementById('dfPhase');
+        var playBtn = document.getElementById('dfPlayBtn');
+        var noiseBtn = document.getElementById('dfNoiseBtn');
+        var resetBtn = document.getElementById('dfResetBtn');
+        if (!canvas || !slider || !phaseEl) return;
+        var ctx = canvas.getContext('2d');
+        var W = canvas.width, H = canvas.height;
+        var MAXSTEP = 50;
+        var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ---- 目标图：用 Canvas 程序绘制的一辆红色汽车（教学示意简图） ---- */
+        var target = document.createElement('canvas');
+        target.width = W; target.height = H;
+        (function drawTarget(){
+          var g = target.getContext('2d');
+          var sky = g.createLinearGradient(0, 0, 0, H);
+          sky.addColorStop(0, '#6fb6e6');
+          sky.addColorStop(0.60, '#cfeaf7');
+          sky.addColorStop(0.63, '#8a9a5b');
+          sky.addColorStop(1, '#687a40');
+          g.fillStyle = sky; g.fillRect(0, 0, W, H);
+          g.fillStyle = '#ffd94d';
+          g.beginPath(); g.arc(410, 60, 29, 0, Math.PI * 2); g.fill();
+          g.fillStyle = 'rgba(255,255,255,.92)';
+          function cloud(x, y, s){
+            g.beginPath();
+            g.arc(x, y, 15 * s, 0, Math.PI * 2);
+            g.arc(x + 19 * s, y - 7 * s, 19 * s, 0, Math.PI * 2);
+            g.arc(x + 40 * s, y, 14 * s, 0, Math.PI * 2);
+            g.fill();
+          }
+          cloud(56, 56, 1); cloud(262, 38, 0.75);
+          g.fillStyle = '#9db38a';
+          g.beginPath();
+          g.moveTo(0, 228); g.quadraticCurveTo(120, 180, 250, 224);
+          g.quadraticCurveTo(360, 254, 480, 218);
+          g.lineTo(480, 242); g.lineTo(0, 242); g.closePath(); g.fill();
+          g.fillStyle = '#5b6066'; g.fillRect(0, 292, W, 68);
+          g.strokeStyle = '#f5d76e'; g.lineWidth = 5; g.setLineDash([26, 20]);
+          g.beginPath(); g.moveTo(0, 327); g.lineTo(W, 327); g.stroke(); g.setLineDash([]);
+          g.fillStyle = 'rgba(0,0,0,.22)';
+          g.beginPath(); g.ellipse(240, 307, 148, 12, 0, 0, Math.PI * 2); g.fill();
+          g.fillStyle = '#d23c2a';
+          g.beginPath();
+          if (typeof g.roundRect === 'function') g.roundRect(96, 238, 288, 52, 16); else g.rect(96, 238, 288, 52);
+          g.fill();
+          g.beginPath();
+          g.moveTo(150, 240); g.quadraticCurveTo(168, 196, 216, 192);
+          g.lineTo(282, 192); g.quadraticCurveTo(322, 196, 338, 240);
+          g.closePath(); g.fill();
+          g.fillStyle = '#bfe6f5';
+          g.beginPath();
+          g.moveTo(166, 236); g.quadraticCurveTo(180, 204, 214, 200); g.lineTo(238, 200); g.lineTo(238, 236); g.closePath(); g.fill();
+          g.beginPath();
+          g.moveTo(248, 200); g.lineTo(280, 200); g.quadraticCurveTo(306, 204, 320, 236); g.lineTo(248, 236); g.closePath(); g.fill();
+          g.fillStyle = '#f7b731'; g.fillRect(100, 256, 17, 10);
+          g.fillStyle = '#ffe9a8'; g.fillRect(363, 256, 17, 10);
+          g.fillStyle = '#8f2318'; g.fillRect(227, 252, 26, 7);
+          function wheel(x){
+            g.fillStyle = '#22252a'; g.beginPath(); g.arc(x, 292, 27, 0, Math.PI * 2); g.fill();
+            g.fillStyle = '#c9ced4'; g.beginPath(); g.arc(x, 292, 13, 0, Math.PI * 2); g.fill();
+            g.fillStyle = '#7d838c'; g.beginPath(); g.arc(x, 292, 5, 0, Math.PI * 2); g.fill();
+          }
+          wheel(152); wheel(328);
+        })();
+
+        /* ---- 噪点：每个像素随机 RGB，换一团就重新生成 ---- */
+        var noise = new Uint8ClampedArray(W * H * 4);
+        function genNoise(){
+          for (var i = 0; i < noise.length; i += 4){
+            noise[i]     = (Math.random() * 256) | 0;
+            noise[i + 1] = (Math.random() * 256) | 0;
+            noise[i + 2] = (Math.random() * 256) | 0;
+            noise[i + 3] = 255;
+          }
+        }
+
+        /* ---- 由糊变清：把目标图按步数做不同程度的缩小再放大，模拟轮廓先行、细节后到 ---- */
+        var tmpA = document.createElement('canvas');
+        var tmpB = document.createElement('canvas');
+        var blurCache = {};
+        function blurredData(step){
+          if (blurCache[step]) return blurCache[step];
+          var t = step / MAXSTEP;
+          var f = 0.03 + 0.97 * Math.pow(t, 1.5);
+          var w2 = Math.max(3, Math.round(W * f));
+          var h2 = Math.max(3, Math.round(H * f));
+          tmpA.width = w2; tmpA.height = h2;
+          var a = tmpA.getContext('2d');
+          a.imageSmoothingEnabled = true;
+          a.drawImage(target, 0, 0, w2, h2);
+          tmpB.width = W; tmpB.height = H;
+          var b = tmpB.getContext('2d');
+          b.imageSmoothingEnabled = true;
+          b.clearRect(0, 0, W, H);
+          b.drawImage(tmpA, 0, 0, W, H);
+          var d = b.getImageData(0, 0, W, H);
+          blurCache[step] = d;
+          return d;
+        }
+
+        var out = ctx.createImageData(W, H);
+        function phaseFor(step){
+          if (step === 0) return ['还没开始', '满屏随机噪点，什么都看不出来——这正是扩散模型的起点，它拿到的就是这样一团“雪花”，手里没有任何现成的图。'];
+          if (step <= 15) return ['第一阶段 · 先出大轮廓', '刚擦掉一点噪点，先浮现的是大块颜色和模糊的影子：上边像天、下边像地，中间有个红色的东西。去噪的顺序是先定大局，细节根本还没轮到。'];
+          if (step <= 32) return ['第二阶段 · 形状认得出来了', '噪点退掉大半，轮廓清楚了：这是一辆车。车身和车顶的形状先到位，但车轮、车窗这些小地方还糊成一团。'];
+          if (step < 50) return ['第三阶段 · 补细节', '大结构已经定型，剩下的步数全在抠细节：轮毂、车窗的反光、路面的标线，一点一点变清楚。'];
+          return ['完成', '噪点全部擦完，图“长”出来了。它不是被一笔画出来的，而是从一团随机噪点里一步步擦出来的——点“换一团噪点”再拖一次，长出来的过程又会不一样。'];
+        }
+        function render(step){
+          var t = step / MAXSTEP;
+          var noiseAmt = Math.pow(1 - t, 1.25);
+          var img = blurredData(step).data;
+          var o = out.data;
+          for (var i = 0; i < o.length; i += 4){
+            o[i]     = img[i]     * (1 - noiseAmt) + noise[i]     * noiseAmt;
+            o[i + 1] = img[i + 1] * (1 - noiseAmt) + noise[i + 1] * noiseAmt;
+            o[i + 2] = img[i + 2] * (1 - noiseAmt) + noise[i + 2] * noiseAmt;
+            o[i + 3] = 255;
+          }
+          ctx.putImageData(out, 0, 0);
+          stepLabel.textContent = '第 ' + step + ' / ' + MAXSTEP + ' 步';
+          var ph = phaseFor(step);
+          phaseEl.innerHTML = '';
+          var name = document.createElement('span');
+          name.className = 'df-phase-name';
+          name.textContent = ph[0];
+          phaseEl.appendChild(name);
+          phaseEl.appendChild(document.createTextNode(' —— ' + ph[1]));
+        }
+        function setStep(v){
+          v = Math.max(0, Math.min(MAXSTEP, v));
+          slider.value = v;
+          render(v);
+        }
+
+        var timer = null;
+        function stopPlay(){
+          if (timer){ clearInterval(timer); timer = null; }
+          playBtn.textContent = '▶ 播放：从噪点长出图';
+        }
+        playBtn.addEventListener('click', function(){
+          if (timer){ stopPlay(); return; }
+          if (+slider.value >= MAXSTEP) setStep(0);
+          playBtn.textContent = '⏸ 暂停';
+          var inc = reduceMotion ? 5 : 1;
+          var delay = reduceMotion ? 150 : 90;
+          timer = setInterval(function(){
+            var v = +slider.value + inc;
+            if (v >= MAXSTEP){ setStep(MAXSTEP); stopPlay(); return; }
+            setStep(v);
+          }, delay);
+        });
+        slider.addEventListener('input', function(){
+          stopPlay();
+          render(+slider.value);
+        });
+        noiseBtn.addEventListener('click', function(){
+          stopPlay();
+          genNoise();
+          setStep(0);
+        });
+        resetBtn.addEventListener('click', function(){
+          stopPlay();
+          setStep(0);
+        });
+
+        genNoise();
+        render(0);
+      })();
+
+      /* ================= Q&A 折叠 ================= */
+      (function(){
+        document.querySelectorAll('.qa-item').forEach(function(item){
+          var btn = item.querySelector('.qa-q');
+          btn.addEventListener('click', function(){
+            var open = item.classList.toggle('open');
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
